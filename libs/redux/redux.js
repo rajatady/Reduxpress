@@ -267,11 +267,11 @@ Redux.prototype._saveTrace = function (resolved) {
     if (process.env.NODE_ENV !== "test") {
         setTimeout(function () {
             that.logger.info("1. Response sent to the agent..");
-            that.logger.info("2. Now Saving response trace to DB ...");
             endTime = new Date().getTime();
             ttr = that.model.ttr = endTime - that.startTime;
             that.model.resolved = resolved;
             if (that.options.saveTrace) {
+                that.logger.info("2. Now Saving response trace to DB ...");
                 that.model.save()
                     .then(function (model) {
                         that.logger.info("3. Saved data to DB ...");
@@ -287,6 +287,12 @@ Redux.prototype._saveTrace = function (resolved) {
                             that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
                         }
                     })
+            } else {
+                if (resolved) {
+                    that.logger.info("2. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                } else {
+                    that.logger.errorLine("2. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                }
             }
         }, 0);
     }
