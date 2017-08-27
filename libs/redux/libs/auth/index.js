@@ -4,7 +4,7 @@
 var JWT = require("jsonwebtoken");
 var AuthCron = require('./cron');
 var speakEasy = require('speakeasy');
-
+var request = require("request");
 var ErrorUtils = require("../error/index");
 /**
  * @memberOf Auth#
@@ -41,6 +41,33 @@ Auth.prototype.validateToken = function (token) {
             .catch(function (err) {
                 reject(err)
             });
+    })
+};
+
+/**
+ * @memberOf Auth#
+ * @param token
+ * @param authOptions
+ * @returns {Promise}
+ */
+
+Auth.prototype.validateExternalToken = function (token, authOptions) {
+    return new Promise(function (resolve, reject) {
+        request(authOptions.apiUrl, {
+            headers: {
+                "x-access-token" : token
+            },
+            method: "POST",
+            json: {
+                oauth: authOptions.oauthToken
+            }
+        }, function (rsp, body, err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(body.message.users[0]);
+            }
+        })
     })
 };
 

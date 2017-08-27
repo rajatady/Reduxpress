@@ -7,7 +7,19 @@ var Logger = require("./libs/logger/index");
 var Cron = require("./libs/auth/cron");
 var Routes = require("./routes");
 var ReduxCrud = require("./libs/crud-router/index");
+var reduxOptions = {};
 
+/**
+ * @example
+ * {
+ * }
+ * @param options
+ */
+
+
+module.exports.setOptions = function (options) {
+    reduxOptions = options;
+};
 
 module.exports.mount = function (request, response, next) {
     var model = new Model({
@@ -21,13 +33,10 @@ module.exports.mount = function (request, response, next) {
         version: request.headers.version
     });
 
-    var redux = new Redux(model);
+    var redux = new Redux(model, reduxOptions);
     request.redux = redux;
     redux.printInitMessage();
     next();
-        
-  
-
 };
 
 module.exports.startCronJobs = function () {

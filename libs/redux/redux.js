@@ -11,9 +11,17 @@ var Auth = require("./libs/auth/index");
 var Err = require("./libs/error/index");
 
 var Crud = require("./libs/crud/index");
-
-function Redux(model) {
-    this.options = {};
+const defaultOptions = {
+    saveTrace: true,
+    auth: {
+        external: false,
+        apiUrl: "",
+        oauthToken: "",
+        scope : ""
+    }
+};
+function Redux(model, options) {
+    this.options = options || defaultOptions;
     this.model = model;
     this.logger = Logger;
     this.request = Request;
@@ -428,12 +436,20 @@ Redux.prototype.saveAuthDetails = function (data) {
  */
 Redux.prototype.verifyToken = function (token) {
     if (typeof token === 'string') {
-        return this.auth.validateToken(token);
+        if (this.options.auth.external) {
+            return this.auth.validateExternalToken(token, this.options.auth);
+        } else {
+            return this.auth.validateToken(token);
+        }
     } else if (Utils.isObject(token)) {
         var that = this;
         this.headersValidator(token, ["x-access-token"])
             .then(function (data) {
-                return that.auth.validateToken(data["x-access-token"]);
+                if (that.options.auth.external) {
+                    return that.auth.validateExternalToken(token, that.options.auth);
+                } else {
+                    return that.auth.validateToken(data["x-access-token"]);
+                }
             })
             .catch(function (err) {
                 throw err;
