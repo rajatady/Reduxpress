@@ -3,6 +3,4 @@
  */
 "use strict";
 
-module.exports = function () {
-    return require("./libs/redux");
-};
+module.exports = require("./libs/redux");
