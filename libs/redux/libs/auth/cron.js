@@ -6,13 +6,13 @@ const fs = require('fs');
 
 const path = require('path');
 
-const Agenda = require('agenda');
+// const Agenda = require('agenda');
 
 const crypto = require('crypto');
 
-const Setting = require(path.resolve('./modules/config/config')).database.dev;
+// const Setting = require(path.resolve('./modules/config/config')).database.dev;
 
-const dbase = Setting.host + Setting.name;
+// const dbase = Setting.host + Setting.name;
 
 var secret = "";
 
@@ -26,13 +26,13 @@ function AuthCron() {
         "mon": "months",
         "yrs": "years"
     };
-    this.agenda = new Agenda({
-        db: {
-            address: dbase,
-            collection: 'cronjobs',
-            options: {server: {auto_reconnect: true}}
-        }
-    });
+    // this.agenda = new Agenda({
+    //     db: {
+    //         address: dbase,
+    //         collection: 'cronjobs',
+    //         options: {server: {auto_reconnect: true}}
+    //     }
+    // });
 }
 
 AuthCron.prototype.runCron = function (name, time, units) {

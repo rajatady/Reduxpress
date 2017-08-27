@@ -34,11 +34,6 @@ module.exports.startCronJobs = function () {
     Cron.run();
 };
 
-module.exports.startCronJobs = function () {
-    Cron.run();
-};
-
-
 module.exports.router = function () {
     return Routes;
 };
