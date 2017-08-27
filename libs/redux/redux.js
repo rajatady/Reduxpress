@@ -13,6 +13,7 @@ var Err = require("./libs/error/index");
 var Crud = require("./libs/crud/index");
 
 function Redux(model) {
+    this.options = {};
     this.model = model;
     this.logger = Logger;
     this.request = Request;
@@ -270,21 +271,23 @@ Redux.prototype._saveTrace = function (resolved) {
             endTime = new Date().getTime();
             ttr = that.model.ttr = endTime - that.startTime;
             that.model.resolved = resolved;
-            that.model.save()
-                .then(function (model) {
-                    that.logger.info("3. Saved data to DB ...");
-                })
-                .catch(function (err) {
-                    that.logger.errorLine("3. Error while saving data ...");
-                    that.err(err);
-                })
-                .finally(function () {
-                    if (resolved) {
-                        that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                    } else {
-                        that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                    }
-                })
+            if (that.options.saveTrace) {
+                that.model.save()
+                    .then(function (model) {
+                        that.logger.info("3. Saved data to DB ...");
+                    })
+                    .catch(function (err) {
+                        that.logger.errorLine("3. Error while saving data ...");
+                        that.err(err);
+                    })
+                    .finally(function () {
+                        if (resolved) {
+                            that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                        } else {
+                            that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                        }
+                    })
+            }
         }, 0);
     }
 };
