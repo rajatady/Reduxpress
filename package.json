@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,5 +13,20 @@
   },
   "author": "Kumar Divya Rajat",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/reduxpress/redux#readme"
+  "homepage": "https://bitbucket.org/reduxpress/redux#readme",
+  "dependencies": {
+    "acl": "^0.4.10",
+    "async": "^2.5.0",
+    "bluebird": "^3.5.0",
+    "chalk": "^2.1.0",
+    "console.table": "^0.9.1",
+    "express": "^4.15.4",
+    "jsonwebtoken": "^7.4.3",
+    "lodash": "^4.17.4",
+    "mongoose": "^4.11.8",
+    "msg91-rdx": "^1.0.4",
+    "query-string": "^5.0.0",
+    "request": "^2.81.0",
+    "speakeasy": "^2.0.0"
+  }
 }

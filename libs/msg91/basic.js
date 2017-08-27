@@ -2,8 +2,8 @@
  * Created by kumardivyarajat on 16/08/16.
  */
 var https = require('https');
-var express = require('express');
-var router = express.Router();
+// var express = require('express');
+// var router = express.Router();
 var forward, agent, tag;
 var Promise = require("bluebird");
 var msg91Err = require('./errorUtils');
