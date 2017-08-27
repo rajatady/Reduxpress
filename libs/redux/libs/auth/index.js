@@ -61,7 +61,7 @@ Auth.prototype.validateExternalToken = function (token, authOptions) {
             json: {
                 oauth: authOptions.oauthToken
             }
-        }, function (rsp, body, err) {
+        }, function (err, rsp, body) {
             if (err) {
                 reject(err);
             } else {
