@@ -6,6 +6,7 @@ var AuthCron = require('./cron');
 var speakEasy = require('speakeasy');
 var request = require("request");
 var ErrorUtils = require("../error/index");
+
 /**
  * @memberOf Auth#
  * @constructor
@@ -55,11 +56,12 @@ Auth.prototype.validateExternalToken = function (token, authOptions) {
     return new Promise(function (resolve, reject) {
         request(authOptions.apiUrl, {
             headers: {
-                "x-access-token" : token
+                "x-access-token": token
             },
             method: "POST",
             json: {
-                oauth: authOptions.oauthToken
+                oauth: authOptions.oauthToken,
+                token: token
             }
         }, function (err, rsp, body) {
             if (err) {
