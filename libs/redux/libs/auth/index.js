@@ -29,7 +29,10 @@ Auth.prototype.validateToken = function (token) {
             }
             else {
                 var dataToReturn;
-                dataToReturn = decoded.user;
+                dataToReturn = decoded;
+                if (!dataToReturn) {
+                    dataToReturn = decoded.user;
+                }
                 if (!dataToReturn) {
                     dataToReturn = decoded._doc;
                 }
@@ -148,4 +151,4 @@ Auth.prototype.runCron = function () {
 };
 
 
-module.exports = new Auth();
+module.exports = Auth;
