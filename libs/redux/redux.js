@@ -17,9 +17,10 @@ const defaultOptions = {
         external: false,
         apiUrl: "",
         oauthToken: "",
-        scope : ""
+        scope: ""
     }
 };
+
 function Redux(model, options) {
     this.options = options || defaultOptions;
     this.model = model;
@@ -27,7 +28,7 @@ function Redux(model, options) {
     this.request = Request;
     this.response = new Response();
     this.utils = Utils;
-    this.auth = Auth;
+    this.auth = new Auth(options.secret || "rayees");
     this.error = Err;
     this.crud = Crud;
     this.startTime = new Date().getTime();
