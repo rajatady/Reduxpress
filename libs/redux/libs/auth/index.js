@@ -2,15 +2,16 @@
  * Created by Mir Rayees on 23/09/16.
  */
 var JWT = require("jsonwebtoken");
-var AuthCron = require('./cron');
 var speakEasy = require('speakeasy');
-
+var request = require("request");
 var ErrorUtils = require("../error/index");
+
 /**
  * @memberOf Auth#
  * @constructor
  */
-function Auth() {
+function Auth(appSecret) {
+    this.secret = appSecret;
 }
 
 /**
@@ -20,27 +21,49 @@ function Auth() {
  */
 
 Auth.prototype.validateToken = function (token) {
+    var vm = this;
     return new Promise(function (resolve, reject) {
-        AuthCron.secret()
-            .then(function (secret) {
-                console.log(secret);
-                JWT.verify(token, secret, function (error, decoded) {
-                    if (error) {
-                        reject(ErrorUtils.generateNewError(413));
-                    }
-                    else {
-                        var dataToReturn = {};
-                        dataToReturn = decoded.user;
-                        if (!dataToReturn) {
-                            dataToReturn = decoded._doc;
-                        }
-                        resolve(dataToReturn);
-                    }
-                })
-            })
-            .catch(function (err) {
-                reject(err)
-            });
+        JWT.verify(token, vm.secret, function (error, decoded) {
+            if (error) {
+                reject(ErrorUtils.generateNewError(413));
+            }
+            else {
+                var dataToReturn;
+                dataToReturn = decoded.user;
+                if (!dataToReturn) {
+                    dataToReturn = decoded._doc;
+                }
+                resolve(dataToReturn);
+            }
+        })
+    })
+};
+
+/**
+ * @memberOf Auth#
+ * @param token
+ * @param authOptions
+ * @returns {Promise}
+ */
+
+Auth.prototype.validateExternalToken = function (token, authOptions) {
+    return new Promise(function (resolve, reject) {
+        request(authOptions.apiUrl, {
+            headers: {
+                "x-access-token": token
+            },
+            method: "POST",
+            json: {
+                oauth: authOptions.oauthToken,
+                token: token
+            }
+        }, function (err, rsp, body) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(body.message.users[0]);
+            }
+        })
     })
 };
 
@@ -59,23 +82,20 @@ Auth.prototype.generateToken = function (user, accessTokenTime, refreshTokenTime
         "hours": "h",
         "days": "d"
     };
+    var vm = this;
     return new Promise(function (resolve, reject) {
-        AuthCron.secret()
-            .then(function (secret) {
-                console.log(secret);
-                var tokens = {};
-                if (!(unit in TimeUnits))
-                    reject(ErrorUtils.generateNewError(500, "Invalid Time Units"));
-                var accessTime = accessTokenTime + TimeUnits[unit].toUpperCase();
-                var refreshTime = refreshTokenTime + TimeUnits[unit].toUpperCase();
-                tokens.x_access_token = JWT.sign(user, secret, {expiresIn: accessTime});
-                tokens.x_refresh_token = JWT.sign(user, secret.substr(0, secret.length / 2), {expiresIn: refreshTime});
-                tokens.secret = secret;
-                if (secret && tokens.x_access_token && tokens.x_refresh_token)
-                    resolve(tokens);
-                else
-                    reject(ErrorUtils.generateNewError(500));
-            });
+        var tokens = {};
+        if (!(unit in TimeUnits))
+            reject(ErrorUtils.generateNewError(500, "Invalid Time Units"));
+        var accessTime = accessTokenTime + TimeUnits[unit].toUpperCase();
+        var refreshTime = refreshTokenTime + TimeUnits[unit].toUpperCase();
+        tokens.x_access_token = JWT.sign(user, vm.secret, {expiresIn: accessTime});
+        tokens.x_refresh_token = JWT.sign(user, vm.secret.substr(0, vm.secret.length / 2), {expiresIn: refreshTime});
+        tokens.secret = vm.secret;
+        if (vm.secret && tokens.x_access_token && tokens.x_refresh_token)
+            resolve(tokens);
+        else
+            reject(ErrorUtils.generateNewError(500));
 
     });
 };
@@ -119,10 +139,12 @@ Auth.prototype.verifyOTP = function (secret, OTP) {
 
 /**
  * @memberOf Auth#
+ * @deprecated
  */
 
 Auth.prototype.runCron = function () {
-    AuthCron.run();
+
+    // AuthCron.run();
 };
 
 
