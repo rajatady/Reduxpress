@@ -67,6 +67,20 @@ Request.prototype._validateParams = function (request, params) {
     });
 };
 
+
+Request.prototype._validateQuery = function (request, params) {
+    var that = this;
+    return new Promise(function (resolve, reject) {
+        that._validate(params, request, "query")
+            .then(function (data) {
+                resolve(data);
+            })
+            .catch(function (err) {
+                reject(err);
+            })
+    });
+};
+
 Request.prototype._validateBody = function (request, params) {
     var that = this;
     if (Array.isArray(params)) {

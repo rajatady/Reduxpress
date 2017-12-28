@@ -165,12 +165,21 @@ Redux.prototype.paramsValidator = function (request, params) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param request
  * @param params
  */
 Redux.prototype.bodyValidator = function (request, params) {
     return this.request._validateBody(request, params);
+};
+
+/**
+ * @memberOf Redux
+ * @param request
+ * @param params
+ */
+Redux.prototype.queryValidator = function (request, params) {
+    return this.request._validateQuery(request, params);
 };
 
 /**
