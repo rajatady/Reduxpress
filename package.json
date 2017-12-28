@@ -1,17 +1,21 @@
 {
   "name": "redux",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "test": "mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/ test/acceptance/",
+    "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec --check-leaks --no-exit test/ test/acceptance/",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks --no-exit test/ test/acceptance/",
+    "test-tap": "mocha --require test/support/env --reporter tap --check-leaks --no-exit test/ test/acceptance/"
   },
   "repository": {
     "type": "git",
     "url": "git+https://rajatady@bitbucket.org/reduxpress/redux.git"
   },
-  "author": "Kumar Divya Rajat",
+  "author": "Kumar Divya Rajat <rajat.ady@gmail.com>",
   "license": "ISC",
   "homepage": "https://bitbucket.org/reduxpress/redux#readme",
   "dependencies": {
@@ -28,5 +32,12 @@
     "query-string": "^5.0.0",
     "request": "^2.81.0",
     "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "2.13.1",
+    "istanbul": "0.4.5",
+    "mocha": "3.5.3",
+    "should": "13.1.0",
+    "supertest": "1.2.0"
   }
 }

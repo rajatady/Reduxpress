@@ -10,13 +10,12 @@ var ReduxCrud = require("./libs/crud-router/index");
 var reduxOptions = {};
 
 /**
+ * @description Set options for the redux framework
  * @example
  * {
  * }
  * @param options
  */
-
-
 module.exports.setOptions = function (options) {
     reduxOptions = options;
 };

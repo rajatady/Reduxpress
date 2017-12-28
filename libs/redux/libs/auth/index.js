@@ -71,7 +71,7 @@ Auth.prototype.validateExternalToken = function (token, authOptions) {
 };
 
 /**
- * @memberOf Auth#
+ * @memberOf Redux#
  * @param user
  * @param accessTokenTime
  * @param refreshTokenTime
@@ -105,37 +105,51 @@ Auth.prototype.generateToken = function (user, accessTokenTime, refreshTokenTime
 
 
 /**
- * @memberOf Auth#
- * @param secret
+ * @memberOf Redux#
+ * @description Generates a new otp based on the secret provided
+ * @param {string} secret The secret to be used for generating the OTP.
+ * @param {object} [options]
+ * @param {number} [options.step=30] The time for which the OTP is valid in seconds. Defaults to 30 seconds.
+ * @param {number} [options.digits=6] The number of digits in the OTP. Defaults to 6.
  * @returns {Promise}
  */
-
-Auth.prototype.generateOTP = function (secret) {
+Auth.prototype.generateOTP = function (secret, options) {
+    if (!options)
+        options = {};
     return new Promise(function (resolve, reject) {
-        var token = speakEasy.totp({
+        resolve(speakEasy.totp({
             secret: secret,
-            encoding: 'base32'
-        });
-        token ? resolve(token) : reject(ErrorUtils.generateNewError(437));
+            encoding: 'base32',
+            step: options.step || 30,
+            digits: options.digits || 6
+        }));
     });
 
 };
 
 /**
+ * @version 1.0.1
+ * @description Verifies the OTP based on the secret provided
  * @memberOf Auth#
  * @param secret
  * @param OTP
+ * @param {object} [options]
+ * @param {number} [options.step=30] The time for which the OTP is valid in seconds. Defaults to 30 seconds.
+ * @param {number} [options.digits=6] The number of digits in the OTP. Defaults to 6.
  * @returns {Promise}
  */
-Auth.prototype.verifyOTP = function (secret, OTP) {
+Auth.prototype.verifyOTP = function (secret, OTP, options) {
+    if (!options)
+        options = {};
     return new Promise(function (resolve, reject) {
-        var verified = speakEasy.totp.verify({
+        resolve(speakEasy.totp.verify({
             secret: secret,
             encoding: 'base32',
             window: 4,
-            token: OTP
-        });
-        verified ? resolve(verified) : reject(ErrorUtils.generateNewError(410));
+            token: OTP,
+            step: options.step || 30,
+            digits: options.digits || 6
+        }));
     });
 };
 
