@@ -182,19 +182,20 @@ Redux.prototype.queryValidator = function (request, params) {
     return this.request._validateQuery(request, params);
 };
 
-/**
- * @param request
- */
-Redux.prototype.queryValidator = function (request) {
-    var self = this;
-    return new Promise(function (resolve, reject) {
-        var query = request.query;
-        if (!Object.keys(query).length)
-            reject(self.generateError(301));
-        else
-            resolve(query);
-    });
-};
+// /**
+//  * @param request
+//  */
+// Redux.prototype.queryValidator = function (request) {
+//     var self = this;
+//     return new Promise(function (resolve, reject) {
+//         var query = request.query;
+//         if (!Object.keys(query).length)
+//             reject(self.generateError(301));
+//         else
+//             resolve(query);
+//     });
+// };
+
 Redux.prototype.objectValidator = function (request, objectName, keys) {
 
 };
@@ -483,20 +484,22 @@ Redux.prototype.generateToken = function (user, accessTokenTime, refreshTokenTim
 /**
  * @memberOf Redux#
  * @param secret
+ * @param options
  * @returns {Promise}
  */
-Redux.prototype.generateOTP = function (secret) {
-    return this.auth.generateOTP(secret);
+Redux.prototype.generateOTP = function (secret, options) {
+    return this.auth.generateOTP(secret, options);
 };
 
 /**
  * @memberOf Redux#
  * @param secret
  * @param OTP
+ * @param options
  * @returns {Promise}
  */
-Redux.prototype.verifyOTP = function (secret, OTP) {
-    return this.auth.verifyOTP(secret, OTP);
+Redux.prototype.verifyOTP = function (secret, OTP, options) {
+    return this.auth.verifyOTP(secret, OTP, options);
 };
 
 /**
