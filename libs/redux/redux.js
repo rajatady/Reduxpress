@@ -431,6 +431,29 @@ Redux.prototype.tokenValidator = function (request) {
             })
     });
 };
+
+/**
+ * @memberOf Redux#
+ * @param user
+ */
+Redux.prototype.setCurrentUser = function (user) {
+    this.currentUser = user;
+    this.model.user = user;
+    this.model.userId = user._id || user.id;
+};
+
+/**
+ * @memberOf Redux#
+ * @param tags
+ */
+Redux.prototype.addTag = function (tags) {
+    if (_.isArray(tags)) {
+        this.model.tags = this.model.tags.concat(tags);
+    } else if (_.isString(tags)) {
+        this.model.tags.push(tags);
+    }
+};
+
 /**
  *
  * @param data

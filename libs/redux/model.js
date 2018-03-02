@@ -16,7 +16,10 @@ var reduxSchema = new Schema({
     accessTokenHash: String,
     refreshToken: String,
     resolved: {type: Boolean, default: false},
-    ttr: {type: Number}
+    ttr: {type: Number},
+    userId: {type: String},
+    userData: {type: Object},
+    tags: []
 }, {timestamps: true});
 
 
