@@ -7,12 +7,15 @@ var Traces = require("./trace");
 module.exports = {
     getAllTraces: function (request, response) {
         var redux = request.redux;
-
+        var query = request.querymen.query, cursor = request.querymen.cursor, select = request.querymen.select;
+        if (cursor.limit && request.query.page) {
+            cursor.skip = cursor.limit * (request.query.page - 1)
+        }
         redux
             .invokeAcl("admin")
-            .interceptor(request, ["^offset"], "params")
+            .tokenValidator(request)
             .then(function (data) {
-                return Traces.getAllTraces(data.offset);
+                return Traces.getAllTraces(query, cursor, select);
             })
             .then(function (traces) {
                 redux.log(traces, "getAllTraces");

@@ -1,6 +1,6 @@
 {
   "name": "redux",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -30,6 +30,7 @@
     "mongoose": "^4.11.8",
     "msg91-rdx": "^1.0.4",
     "query-string": "^5.0.0",
+    "querymen": "^2.1.3",
     "request": "^2.81.0",
     "speakeasy": "^2.0.0"
   },

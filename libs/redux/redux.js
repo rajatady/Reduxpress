@@ -412,23 +412,43 @@ Redux.prototype.invokeAcl = function (value) {
 Redux.prototype.tokenValidator = function (request) {
     var self = this;
     return new Promise(function (resolve, reject) {
-        self.headersValidator(request, ["x-access-token"])
-            .then(function (data) {
-                return self.verifyToken(data['x-access-token']);
-            })
-            .then(function (result) {
-                self.currentUser = result;
-                if (self.allowedRoles.length > 0) {
-                    var valid = self._checkRolesValidity();
-                    if (!valid) {
-                        throw self.generateError(403, "Unauthorized");
+        if (request.headers["x-access-token"]) {
+            self.headersValidator(request, ["x-access-token"])
+                .then(function (data) {
+                    return self.verifyToken(data['x-access-token']);
+                })
+                .then(function (result) {
+                    self.currentUser = result;
+                    if (self.allowedRoles.length > 0) {
+                        var valid = self._checkRolesValidity();
+                        if (!valid) {
+                            throw self.generateError(403, "Unauthorized");
+                        }
                     }
-                }
-                resolve(result);
-            })
-            .catch(function (error) {
-                reject(error);
-            })
+                    resolve(result);
+                })
+                .catch(function (error) {
+                    reject(error);
+                })
+        } else if (request.query['access_token']) {
+            self.queryValidator(request, ['access_token'])
+                .then(function (data) {
+                    return self.verifyToken(data['access_token']);
+                })
+                .then(function (result) {
+                    self.currentUser = result;
+                    if (self.allowedRoles.length > 0) {
+                        var valid = self._checkRolesValidity();
+                        if (!valid) {
+                            throw self.generateError(403, "Unauthorized");
+                        }
+                    }
+                    resolve(result);
+                })
+                .catch(function (error) {
+                    reject(error);
+                })
+        }
     });
 };
 
