@@ -27,8 +27,11 @@ module.exports.mount = function (request, response, next) {
         ipAddress: request.ip,
         appAgent: request.headers["app-agent"],
         userAgent: request.headers["user-agent"],
-        accessToken: request.headers["x-access-token"],
+        accessToken: request.headers["x-access-token"] || request.query['access_token'],
         refreshToken: request.headers["x-refresh-token"],
+        query: request.query,
+        body: request.body,
+        params: request.params,
         version: request.headers.version
     });
 

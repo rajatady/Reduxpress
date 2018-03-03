@@ -18,7 +18,10 @@ var reduxSchema = new Schema({
     resolved: {type: Boolean, default: false},
     ttr: {type: Number},
     userId: {type: String},
-    userData: {type: Object},
+    user: {type: Object},
+    query: {type: Object},
+    body: {type: Object},
+    params: {type: Object},
     tags: []
 }, {timestamps: true});
 
