@@ -54,4 +54,7 @@ module.exports.crud = function () {
     return ReduxCrud;
 };
 
+
+module.exports.schema = Model;
+
 module.exports.logger = Logger;
