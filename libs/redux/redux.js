@@ -106,13 +106,16 @@ Redux.prototype.log = function (data, title) {
  * @param data
  */
 Redux.prototype.err = function (data) {
-    this.log(data.stack, "Error");
-    var error = {
-        stack: data.stack,
-        message: data.message,
-        code: data.code
-    };
-    this.model.trace.push(error);
+    if (data instanceof Error) {
+        var error = {
+            stack: data.stack,
+            message: data.message,
+            code: data.code
+        };
+        this.model.trace.push(error);
+    } else {
+        this.model.trace.push(data);
+    }
 };
 
 /********************************** END **********************************/
@@ -246,6 +249,7 @@ Redux.prototype.sendSuccess = function (response, data, key) {
  * @param message
  */
 Redux.prototype.sendError = function (response, data, message) {
+    this.err(data);
     this.response.error(response, data, message);
     this._saveTrace(false);
     var self = this;
