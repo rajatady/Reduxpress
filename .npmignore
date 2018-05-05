@@ -45,3 +45,7 @@ typings/
 *.tgz
 .yarn-integrity
 .env
+example
+.eslintignore
+.eslintrc
+.gitignore
