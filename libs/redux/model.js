@@ -7,6 +7,8 @@ var Schema = mongoose.Schema;
 var reduxSchema = new Schema({
     route: String,
     ipAddress: String,
+    ipDetails: {},
+    metaData: {},
     version: String,
     trace: [],
     method: String,

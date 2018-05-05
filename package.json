@@ -1,11 +1,12 @@
 {
   "name": "redux",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
-  "main": "index.js",
+  "main": "libs",
   "scripts": {
-    "start": "node index.js",
+    "start": "node libs",
     "lint": "eslint .",
+    "docs": "jsdoc2md libs/redux/redux.js > README.md",
     "test": "mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/ test/acceptance/",
     "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec --check-leaks --no-exit test/ test/acceptance/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks --no-exit test/ test/acceptance/",
@@ -24,7 +25,7 @@
     "bluebird": "^3.5.0",
     "chalk": "^2.1.0",
     "console.table": "^0.9.1",
-    "express": "^4.15.4",
+    "iplocation": "^5.0.0",
     "jsonwebtoken": "^7.4.3",
     "lodash": "^4.17.4",
     "mongoose": "^4.11.8",
@@ -36,9 +37,11 @@
   },
   "devDependencies": {
     "eslint": "2.13.1",
+    "express": "^4.16.3",
     "istanbul": "0.4.5",
     "mocha": "3.5.3",
     "should": "13.1.0",
-    "supertest": "1.2.0"
+    "supertest": "1.2.0",
+    "jsdoc-to-markdown": "^4.0.1"
   }
 }

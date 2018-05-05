@@ -13,7 +13,7 @@ var errors = {
     409: "Some parameters missing",
     410: "Invalid OTP",
     411: "Invalid Params",
-    413 : "Token Expired",
+    413: "Token Expired",
 
     //Login Related Errors
     403: "Invalid Token Provided",
@@ -77,6 +77,9 @@ var error = {
             err.message = "Internal Server Error";
         }
         return err;
+    },
+    injectError: function (errObject) {
+        errors = errObject;
     }
 };
 

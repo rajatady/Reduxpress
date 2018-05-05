@@ -9,10 +9,17 @@ var Utils = require("./libs/utils/index");
 var Response = require("./libs/response/index");
 var Auth = require("./libs/auth/index");
 var Err = require("./libs/error/index");
+var ipLocation = require('iplocation');
 
 var Crud = require("./libs/crud/index");
+
+/**
+ * @default Default Options
+ * @type {{saveTrace: boolean, extendIpData: boolean, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
+ */
 const defaultOptions = {
     saveTrace: true,
+    extendIpData: false,
     auth: {
         external: false,
         apiUrl: "",
@@ -21,6 +28,12 @@ const defaultOptions = {
     }
 };
 
+/**
+ *
+ * @param model
+ * @param options
+ * @constructor
+ */
 function Redux(model, options) {
     this.options = options || defaultOptions;
     this.model = model;
@@ -28,12 +41,15 @@ function Redux(model, options) {
     this.request = Request;
     this.response = new Response();
     this.utils = Utils;
-    this.auth = new Auth(options.secret || "rayees");
+    this.auth = new Auth(options.secret || 'secret');
     this.error = Err;
     this.crud = Crud;
     this.startTime = new Date().getTime();
     this.endTime = "";
     this.allowedRoles = [];
+    if (this.options.errors) {
+        Err.injectError(this.options.errors);
+    }
 }
 
 
@@ -41,7 +57,8 @@ function Redux(model, options) {
 
 
 /***
- * @memberOf Redux#
+ * @description Prints the init message
+ * @memberOf Redux
  */
 Redux.prototype.printInitMessage = function () {
     if (process.env.NODE_ENV !== "test")
@@ -54,21 +71,24 @@ Redux.prototype.printInitMessage = function () {
 
 /****************************** START LOGGER ******************************/
 
-
+/**
+ *
+ * @return {Redux.logger|*}
+ */
 Redux.prototype.logger = function () {
     return this.logger;
 };
 
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  */
 Redux.prototype.printTrace = function () {
     Logger.console("Redux Tracer", this.model.trace);
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param data
  * @param title
  */
@@ -102,7 +122,7 @@ Redux.prototype.log = function (data, title) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param data
  */
 Redux.prototype.err = function (data) {
@@ -129,7 +149,7 @@ Redux.prototype.request = function () {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @returns {Redux}
  */
 Redux.prototype.suppressInput = function () {
@@ -139,7 +159,7 @@ Redux.prototype.suppressInput = function () {
 
 /***
  *
- * @memberOf Redux#
+ * @memberOf Redux
  * @param request
  * @param params
  * @param inBody
@@ -150,7 +170,7 @@ Redux.prototype.requestValidator = function (request, params, inBody) {
 };
 
 /***
- * @memberOf Redux#
+ * @memberOf Redux
  * @param request
  * @param params
  */
@@ -159,7 +179,7 @@ Redux.prototype.headersValidator = function (request, params) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param request
  * @param params
  */
@@ -229,7 +249,7 @@ Redux.prototype.setExtra = function (key, value) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param response
  * @param data
  * @param key
@@ -243,7 +263,7 @@ Redux.prototype.sendSuccess = function (response, data, key) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param response
  * @param data
  * @param message
@@ -278,6 +298,32 @@ Redux.prototype.sendError = function (response, data, message) {
     // BugsSnag.notify(data);
 };
 
+var _save = function (that, resolved, ttr) {
+    if (that.options.saveTrace) {
+        that.logger.info("2. Now Saving response trace to DB ...");
+        that.model.save()
+            .then(function (model) {
+                that.logger.info("3. Saved data to DB ...");
+            })
+            .catch(function (err) {
+                that.logger.errorLine("3. Error while saving data ...");
+                that.err(err);
+            })
+            .finally(function () {
+                if (resolved) {
+                    that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                } else {
+                    that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                }
+            })
+    } else {
+        if (resolved) {
+            that.logger.info("2. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+        } else {
+            that.logger.errorLine("2. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+        }
+    }
+};
 /**
  *
  * @param resolved
@@ -293,36 +339,28 @@ Redux.prototype._saveTrace = function (resolved) {
             endTime = new Date().getTime();
             ttr = that.model.ttr = endTime - that.startTime;
             that.model.resolved = resolved;
-            if (that.options.saveTrace) {
-                that.logger.info("2. Now Saving response trace to DB ...");
-                that.model.save()
-                    .then(function (model) {
-                        that.logger.info("3. Saved data to DB ...");
+            if (that.options.extendIpData) {
+                that.logger.info("Finding IP Details..");
+                ipLocation(that.model.ipAddress)
+                    .then(function (res) {
+                        that.model.ipDetails = res;
+                        that.logger.info("IP details found !");
+                        // Logger.console('IP Address - ' + that.model.ipAddress, res);
+                        _save(that, resolved, ttr);
                     })
                     .catch(function (err) {
-                        that.logger.errorLine("3. Error while saving data ...");
-                        that.err(err);
-                    })
-                    .finally(function () {
-                        if (resolved) {
-                            that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                        } else {
-                            that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                        }
+                        that.logger.error(err, 'Error while fetching IP Data for Address - ' + that.model.ipAddress);
+                        _save(that, resolved, ttr);
                     })
             } else {
-                if (resolved) {
-                    that.logger.info("2. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                } else {
-                    that.logger.errorLine("2. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                }
+                _save(that, resolved, ttr);
             }
         }, 0);
     }
 };
 
 /***
- * @memberOf Redux#
+ * @memberOf Redux
  */
 Redux.prototype.suppress = function () {
     this.response.suppressFields(arguments);
@@ -334,7 +372,7 @@ Redux.prototype.suppress = function () {
 
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @returns {exports.auth|*}
  */
 Redux.prototype.auth = function () {
@@ -343,7 +381,7 @@ Redux.prototype.auth = function () {
 
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param request
  * @param params
  * @param findDataIn
@@ -457,7 +495,7 @@ Redux.prototype.tokenValidator = function (request) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param user
  */
 Redux.prototype.setCurrentUser = function (user) {
@@ -467,7 +505,7 @@ Redux.prototype.setCurrentUser = function (user) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param tags
  */
 Redux.prototype.addTag = function (tags) {
@@ -488,7 +526,7 @@ Redux.prototype.saveAuthDetails = function (data) {
     this.model.accessTokenHash = data.secret;
 };
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param token
  * @returns {Promise}
  */
@@ -516,7 +554,7 @@ Redux.prototype.verifyToken = function (token) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param user
  * @param accessTokenTime
  * @param refreshTokenTime
@@ -529,7 +567,7 @@ Redux.prototype.generateToken = function (user, accessTokenTime, refreshTokenTim
 
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param secret
  * @param options
  * @returns {Promise}
@@ -539,7 +577,7 @@ Redux.prototype.generateOTP = function (secret, options) {
 };
 
 /**
- * @memberOf Redux#
+ * @memberOf Redux
  * @param secret
  * @param OTP
  * @param options
@@ -550,16 +588,21 @@ Redux.prototype.verifyOTP = function (secret, OTP, options) {
 };
 
 /**
- * @param secret
- * @param OTP
- * @returns {Promise}
+ *
+ * @param code
+ * @param message
+ * @return {*}
  */
-
 Redux.prototype.generateError = function (code, message) {
     return this.error.generateNewError(code, message);
 };
 
-
+/**
+ *
+ * @param mobile
+ * @param message
+ * @return {bluebird}
+ */
 Redux.prototype.sendSingleSMS = function (mobile, message) {
     return new Promise(function (resolve, reject) {
         msg91.send({mobiles: mobile, message: message})
@@ -572,6 +615,16 @@ Redux.prototype.sendSingleSMS = function (mobile, message) {
             })
 
     })
+};
+
+/**
+ *
+ * @param data
+ * @return {Redux}
+ */
+Redux.prototype.setMetaData = function (data) {
+    this.model.metaData = data;
+    return this;
 };
 
 
