@@ -18,7 +18,7 @@ app.use(reduxpress.mount);
 
 app.get('/', function (req, res) {
     var redux = req.redux;
-    redux.sendError(res, redux.generateError(439));
+    redux.sendError(res, redux.generateError(437));
 });
 
 app.listen(port, function () {
