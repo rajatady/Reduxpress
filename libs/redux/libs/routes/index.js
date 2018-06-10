@@ -22,8 +22,10 @@ module.exports = {
                 redux.sendSuccess(response, traces, "traces");
             })
             .catch(function (err) {
-                redux.error(err);
+                redux.err(err);
                 redux.sendError(response, err);
             })
+
+
     }
 };

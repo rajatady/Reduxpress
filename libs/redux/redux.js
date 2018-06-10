@@ -14,10 +14,11 @@ var ipLocation = require('iplocation');
 var Crud = require("./libs/crud/index");
 
 /**
+ *
  * @default Default Options
  * @type {{saveTrace: boolean, extendIpData: boolean, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
  */
-const defaultOptions = {
+var defaultOptions = {
     saveTrace: true,
     extendIpData: false,
     auth: {
@@ -29,7 +30,7 @@ const defaultOptions = {
 };
 
 /**
- *
+ * @memberOf request
  * @param model
  * @param options
  * @constructor

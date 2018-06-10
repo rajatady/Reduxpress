@@ -26,6 +26,12 @@ module.exports.validateId = function (data) {
 
             });
             resolve(data);
+        } else {
+            if (!(mongoose.Types.ObjectId.isValid(data) && mongoose.Types.ObjectId.isValid(data))) {
+                throw err.generateNewError(411);
+            } else {
+                resolve(data);
+            }
         }
     })
 

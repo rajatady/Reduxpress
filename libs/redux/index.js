@@ -20,6 +20,12 @@ module.exports.setOptions = function (options) {
     reduxOptions = options;
 };
 
+/**
+ *
+ * @param request
+ * @param response
+ * @param next
+ */
 module.exports.mount = function (request, response, next) {
     var model = new Model({
         method: request.method,
