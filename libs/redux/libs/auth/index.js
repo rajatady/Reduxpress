@@ -29,12 +29,14 @@ Auth.prototype.validateToken = function (token) {
             }
             else {
                 var dataToReturn;
-                dataToReturn = decoded;
                 if (!dataToReturn) {
                     dataToReturn = decoded.user;
                 }
                 if (!dataToReturn) {
                     dataToReturn = decoded._doc;
+                }
+                if(!dataToReturn) {
+                    dataToReturn = decoded;
                 }
                 resolve(dataToReturn);
             }
