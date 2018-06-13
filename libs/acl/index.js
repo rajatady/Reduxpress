@@ -9,11 +9,13 @@ console.log(mongoose.connection.db);
 // var client = redis.createClient();
 
 acl = new acl(new acl.mongodbBackend(mongoose.connection.db, 'acl_'));
+
 // acl = new acl(new acl.redisBackend(client));
 
 function Aclaadira() {
 
 }
+
 Aclaadira.prototype = {
     setRole: function (userId, role) {
         // acl.userRoles(userId, function (error, roles) {

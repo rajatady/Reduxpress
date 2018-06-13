@@ -491,6 +491,8 @@ Redux.prototype.tokenValidator = function (request) {
                 .catch(function (error) {
                     reject(error);
                 })
+        } else {
+            throw self.generateError(403, "Unauthorized");
         }
     });
 };
