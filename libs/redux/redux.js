@@ -305,12 +305,16 @@ var _save = function (that, resolved, ttr) {
         that.model.save()
             .then(function (model) {
                 that.logger.info("3. Saved data to DB ...");
+                if (resolved) {
+                    that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                } else {
+                    that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                }
             })
             .catch(function (err) {
+                console.log(err);
                 that.logger.errorLine("3. Error while saving data ...");
                 that.err(err);
-            })
-            .finally(function () {
                 if (resolved) {
                     that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
                 } else {
