@@ -2,9 +2,17 @@ var express = require('express');
 var app = express();
 var reduxpress = require('../libs');
 var port = process.env.PORT || 8100;
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
+    if (err) {
+        console.log('Error connecting to database', err);
+    } else {
+        console.log('Connected to database');
+    }
+});
 
 reduxpress.setOptions({
-    saveTrace: false,
+    saveTrace: true,
     extendIpData: true,
     errors: {
         437: 'Dabba Error'
