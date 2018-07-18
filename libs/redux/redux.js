@@ -332,11 +332,14 @@ var _save = function (that, resolved, ttr) {
             } catch (e) {
                 data = '';
             }
+            var now = new Date;
+            that.model.createdAt = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+                now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
             if (data) {
                 data = JSON.parse(data);
                 if (!data.traces) {
                     data.traces = [];
-                }
+                }2
                 data.traces.push(that.model);
             } else {
                 data = {
