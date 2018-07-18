@@ -13,6 +13,7 @@ mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
 
 reduxpress.setOptions({
     saveTrace: true,
+    engine: 'file',
     extendIpData: true,
     errors: {
         437: 'Dabba Error'

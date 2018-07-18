@@ -57,10 +57,8 @@ Response.prototype.success = function (response, data, key) {
     if (this._extras.length > 0) {
         this._extras.forEach(function (o,i) {
             builderData = utils.merge_options(builderData,o);
-            console.log("nsa " + i, builderData);
         });
     }
-    console.log("nsa", builderData);
     if (utils.isArray(data)) {
         builderData = this._buildArray(builderData, data, key);
     } else if (utils.isObject(data)) {

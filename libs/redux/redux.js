@@ -21,6 +21,7 @@ var Crud = require("./libs/crud/index");
 var defaultOptions = {
     saveTrace: true,
     extendIpData: false,
+    engine: 'db',
     auth: {
         external: false,
         apiUrl: "",
@@ -302,25 +303,54 @@ Redux.prototype.sendError = function (response, data, message) {
 var _save = function (that, resolved, ttr) {
     if (that.options.saveTrace) {
         that.logger.info("2. Now Saving response trace to DB ...");
-        that.model.save()
-            .then(function (model) {
-                that.logger.info("3. Saved data to DB ...");
-                if (resolved) {
-                    that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                } else {
-                    that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+        if (that.options.engine === 'db') {
+            that.model.save()
+                .then(function (model) {
+                    that.logger.info("3. Saved data to DB ...");
+                    if (resolved) {
+                        that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                    } else {
+                        that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                    }
+                })
+                .catch(function (err) {
+                    console.log(err);
+                    that.logger.errorLine("3. Error while saving data ...");
+                    that.err(err);
+                    if (resolved) {
+                        that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                    } else {
+                        that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                    }
+                })
+        } else if (that.options.engine === 'file') {
+            var fs = require('fs');
+            var pathData = require('path').resolve('./reduxFile.json');
+            var data = '';
+            try {
+                data = fs.readFileSync(pathData);
+            } catch (e) {
+                data = '';
+            }
+            if (data) {
+                data = JSON.parse(data);
+                if (!data.traces) {
+                    data.traces = [];
                 }
-            })
-            .catch(function (err) {
-                console.log(err);
-                that.logger.errorLine("3. Error while saving data ...");
-                that.err(err);
-                if (resolved) {
-                    that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
-                } else {
-                    that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+                data.traces.push(that.model);
+            } else {
+                data = {
+                    traces: [that.model]
                 }
-            })
+            }
+            fs.writeFileSync(pathData, JSON.stringify(data), 'utf-8');
+            that.logger.info("3. Saved data to FILE - reduxFile.json ...");
+            if (resolved) {
+                that.logger.info("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+            } else {
+                that.logger.errorLine("4. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
+            }
+        }
     } else {
         if (resolved) {
             that.logger.info("2. Request served successfully - " + resolved + " in " + (ttr / 1000) + "s.");
