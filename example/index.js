@@ -29,6 +29,12 @@ app.get('/', function (req, res) {
     redux.sendError(res, redux.generateError(437));
 });
 
+
+app.get('/raw', function (req, res) {
+    var redux = req.redux;
+    redux.sendJSON(res, {data: 'data'}, 400);
+});
+
 app.listen(port, function () {
         console.log('Example app listening on port ' + port + '!')
     }
