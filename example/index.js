@@ -13,7 +13,6 @@ mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
 
 reduxpress.setOptions({
     saveTrace: true,
-    engine: 'file',
     extendIpData: true,
     errors: {
         437: 'Dabba Error'
@@ -28,6 +27,12 @@ app.use(reduxpress.mount);
 app.get('/', function (req, res) {
     var redux = req.redux;
     redux.sendError(res, redux.generateError(437));
+});
+
+
+app.get('/raw', function (req, res) {
+    var redux = req.redux;
+    redux.sendJSON(res, {data: 'data'}, 400);
 });
 
 app.listen(port, function () {

@@ -264,6 +264,18 @@ Redux.prototype.sendSuccess = function (response, data, key) {
     this._saveTrace(true);
 };
 
+
+/**
+ * @memberOf Redux
+ * @param response
+ * @param data
+ * @param status
+ */
+Redux.prototype.sendJSON = function (response, data, status) {
+    this.response.raw(response, data, status);
+    this._saveTrace(true);
+};
+
 /**
  * @memberOf Redux
  * @param response

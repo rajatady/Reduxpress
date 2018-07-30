@@ -49,3 +49,7 @@ example
 .eslintignore
 .eslintrc
 .gitignore
+
+.idea
+test
+
