@@ -30,7 +30,7 @@
     "jsonwebtoken": "^7.4.3",
     "kareem": "^2.2.1",
     "lodash": "^4.17.10",
-    "mongoose": "^4.11.8",
+    "mongoose": "^5.2.5",
     "msg91-rdx": "^1.0.4",
     "query-string": "^5.0.0",
     "querymen": "^2.1.3",
