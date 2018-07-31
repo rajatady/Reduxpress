@@ -26,7 +26,9 @@ module.exports = function (mongoose) {
         query: {type: Object},
         body: {type: Object},
         params: {type: Object},
-        tags: []
+        tags: [],
+        path: {type: String, index: true},
+        originalUrl: {type: String}
     }, {timestamps: true});
 
     return mongoose.model('ReduxTrace', reduxSchema);

@@ -43,7 +43,9 @@ module.exports.mount = function (request, response, next) {
         query: request.query,
         body: request.body,
         params: request.params,
-        version: request.headers.version
+        path: request.baseUrl,
+        version: request.headers.version,
+        originalUrl: request.originalUrl
     });
 
     var redux = new Redux(model, reduxOptions);
