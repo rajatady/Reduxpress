@@ -276,7 +276,7 @@ Redux.prototype.sendSuccess = function (response, data, key) {
  */
 Redux.prototype.sendJSON = function (response, data, status) {
     this.response.raw(response, data, status);
-    this._saveTrace(data instanceof Error);
+    this._saveTrace(!(data instanceof Error));
 };
 
 /**

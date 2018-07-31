@@ -33,7 +33,7 @@ app.get('/', function (req, res) {
 
 app.get('/raw', function (req, res) {
     var redux = req.redux;
-    redux.sendJSON(res, {data: 'data'}, 400);
+    redux.sendJSON(res, {data: 'data'});
 });
 
 app.listen(port, function () {
