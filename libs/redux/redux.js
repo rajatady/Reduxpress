@@ -16,7 +16,7 @@ var Crud = require("./libs/crud/index");
 /**
  *
  * @default Default Options
- * @type {{saveTrace: boolean, extendIpData: boolean, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
+ * @type {{saveTrace: boolean, mongooseInstance : Object, extendIpData: boolean, engine : String, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
  */
 var defaultOptions = {
     saveTrace: true,
@@ -37,7 +37,10 @@ var defaultOptions = {
  * @constructor
  */
 function Redux(model, options) {
-    this.options = options || defaultOptions;
+    if (!options) {
+        options = {};
+    }
+    this.options = _.merge(defaultOptions, options);
     this.model = model;
     this.logger = Logger;
     this.request = Request;
@@ -273,7 +276,7 @@ Redux.prototype.sendSuccess = function (response, data, key) {
  */
 Redux.prototype.sendJSON = function (response, data, status) {
     this.response.raw(response, data, status);
-    this._saveTrace(true);
+    this._saveTrace(data instanceof Error);
 };
 
 /**
@@ -351,7 +354,8 @@ var _save = function (that, resolved, ttr) {
                 data = JSON.parse(data);
                 if (!data.traces) {
                     data.traces = [];
-                }2
+                }
+                2
                 data.traces.push(that.model);
             } else {
                 data = {
