@@ -1,7 +1,7 @@
 /**
  * Created by kumardivyarajat on 22/09/16.
  */
-var Model = require("./model");
+var Model;
 var Redux = require("./redux");
 var Logger = require("./libs/logger/index");
 var Cron = require("./libs/auth/cron");
@@ -18,6 +18,11 @@ var reduxOptions = {};
  */
 module.exports.setOptions = function (options) {
     reduxOptions = options;
+    if(options.mongooseInstance) {
+        Model = require('./model')(options.mongooseInstance)
+    } else{
+        Model = require('./model')(require('mongoose'))
+    }
 };
 
 /**

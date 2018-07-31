@@ -11,6 +11,7 @@ mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
     }
 });
 
+
 reduxpress.setOptions({
     saveTrace: true,
     extendIpData: true,
