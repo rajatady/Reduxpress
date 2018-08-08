@@ -1,7 +1,3 @@
-/**
- * Created by kumardivyarajat on 29/09/16.
- */
-
 'use strict';
 
 var errHandler = require('err-handler');

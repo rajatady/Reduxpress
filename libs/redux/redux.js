@@ -1,6 +1,3 @@
-/**
- * Created by kumardivyarajat on 23/09/16.
- */
 var Promise = require('bluebird');
 var _ = require('lodash');
 var Logger = require("./libs/logger/index.js");
@@ -14,7 +11,6 @@ var ipLocation = require('iplocation');
 var Crud = require("./libs/crud/index");
 
 /**
- *
  * @default Default Options
  * @type {{saveTrace: boolean, mongooseInstance : Object, extendIpData: boolean, engine : String, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
  */
@@ -30,8 +26,9 @@ var defaultOptions = {
     }
 };
 
+
 /**
- * @memberOf request
+ * @class Redux
  * @param model
  * @param options
  * @constructor
@@ -62,8 +59,8 @@ function Redux(model, options) {
 
 
 /***
- * @description Prints the init message
  * @memberOf Redux
+ * @description Prints the init message
  */
 Redux.prototype.printInitMessage = function () {
     if (process.env.NODE_ENV !== "test")
@@ -77,7 +74,7 @@ Redux.prototype.printInitMessage = function () {
 /****************************** START LOGGER ******************************/
 
 /**
- *
+ * @memberOf Redux
  * @return {Redux.logger|*}
  */
 Redux.prototype.logger = function () {
@@ -230,11 +227,18 @@ Redux.prototype.objectValidator = function (request, objectName, keys) {
 /********************************** END **********************************/
 
 /****************************** START UTILS ******************************/
-
+/**
+ * @memberOf Redux
+ * @returns Utils
+ */
 Redux.prototype.utils = function () {
     return this.utils;
 };
 
+/**
+ * @memberOf Redux
+ * @param data
+ */
 Redux.prototype.idValidator = function (data) {
     return this.utils.validateId(data);
 };
@@ -243,11 +247,21 @@ Redux.prototype.idValidator = function (data) {
 
 /****************************** START RESPONSE ******************************/
 
+/**
+ * @memberOf Redux
+ * @returns Response
+ */
 Redux.prototype.response = function () {
     return this.response;
 };
 
 
+/**
+ * @memberOf Redux
+ * @param key
+ * @param value
+ * @returns {Redux}
+ */
 Redux.prototype.setExtra = function (key, value) {
     this.response.setExtra(key, value);
     return this;
@@ -258,6 +272,7 @@ Redux.prototype.setExtra = function (key, value) {
  * @param response
  * @param data
  * @param key
+ * @description Send back data to the client with the pre defined schema
  */
 Redux.prototype.sendSuccess = function (response, data, key) {
     if (!key) {
@@ -273,6 +288,7 @@ Redux.prototype.sendSuccess = function (response, data, key) {
  * @param response
  * @param data
  * @param status
+ * @description Sends response as raw JSON passed as parameter to the client instead of enforcing a schema
  */
 Redux.prototype.sendJSON = function (response, data, status) {
     this.response.raw(response, data, status);
@@ -284,35 +300,12 @@ Redux.prototype.sendJSON = function (response, data, status) {
  * @param response
  * @param data
  * @param message
+ * @description Send back error to the client
  */
 Redux.prototype.sendError = function (response, data, message) {
     this.err(data);
     this.response.error(response, data, message);
     this._saveTrace(false);
-    var self = this;
-    // BugsSnag.onBeforeNotify(function (notification) {
-    //     var metaData = notification.events[0].metaData;
-    //     // console.log(notification);
-    //     var event = notification.events[0];
-    //     // modify meta-data
-    //     if (Array.isArray(data.message)) {
-    //         metaData.error = data.message.map(r => r.error + ", ");
-    //     } else {
-    //         metaData.error = data.message;
-    //     }
-    //     if (self.currentUser) {
-    //         event.user = {
-    //             id: self.currentUser._id,
-    //             name: self.currentUser.name,
-    //             email: self.currentUser.email,
-    //             mobile: self.currentUser.mobile,
-    //             role: self.currentUser.role
-    //         };
-    //     }
-    //     metaData.trace = data.stack;
-    //     event.releaseStage = ENV;
-    // });
-    // BugsSnag.notify(data);
 };
 
 var _save = function (that, resolved, ttr) {
@@ -382,6 +375,7 @@ var _save = function (that, resolved, ttr) {
  *
  * @param resolved
  * @private
+ * @description Save the trace
  */
 Redux.prototype._saveTrace = function (resolved) {
     var that = this;
@@ -415,6 +409,7 @@ Redux.prototype._saveTrace = function (resolved) {
 
 /***
  * @memberOf Redux
+ * @description Suppress the fields from the response
  */
 Redux.prototype.suppress = function () {
     this.response.suppressFields(arguments);
@@ -467,11 +462,23 @@ Redux.prototype.interceptor = function (request, params, findDataIn) {
     });
 };
 
+
+/**
+ * @memberOf Redux
+ * @returns {boolean}
+ * @private
+ */
 Redux.prototype._checkRolesValidity = function () {
     // console.log("_checkRolesValidity", this.allowedRoles, this.currentUser);
     return _.includes(this.allowedRoles, this.currentUser.role);
 };
 
+/**
+ * @memberOf Redux
+ * @param request
+ * @param bodyData
+ * @param params
+ */
 Redux.prototype.putInterceptor = function (request, bodyData, params) {
     var self = this;
     return new Promise(function (resolve, reject) {
@@ -491,6 +498,12 @@ Redux.prototype.putInterceptor = function (request, bodyData, params) {
     });
 };
 
+
+/**
+ * @memberOf Redux
+ * @param value
+ * @returns {Redux}
+ */
 Redux.prototype.invokeAcl = function (value) {
     var that = this;
     // _.forEach(Array.prototype.slice.call(arguments[0]), function (value) {
@@ -503,6 +516,7 @@ Redux.prototype.invokeAcl = function (value) {
 
 
 /**
+ * @memberOf Redux
  * @param request
  */
 Redux.prototype.tokenValidator = function (request) {
@@ -573,7 +587,7 @@ Redux.prototype.addTag = function (tags) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param data
  */
 Redux.prototype.saveAuthDetails = function (data) {
@@ -644,7 +658,7 @@ Redux.prototype.verifyOTP = function (secret, OTP, options) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param code
  * @param message
  * @return {*}
@@ -654,7 +668,7 @@ Redux.prototype.generateError = function (code, message) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param mobile
  * @param message
  * @return {bluebird}
@@ -674,7 +688,7 @@ Redux.prototype.sendSingleSMS = function (mobile, message) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param data
  * @return {Redux}
  */
