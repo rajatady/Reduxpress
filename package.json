@@ -7,7 +7,7 @@
     "start": "node libs",
     "lint": "eslint .",
     "prepublish": "npm run docs",
-    "docs": "jsdoc2md libs/redux/redux.js > README.md",
+    "docs": "jsdoc2md --template README.hbs libs/**/*.js > README.md",
     "test": "mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/**/**.spec.js test/acceptance/",
     "test-ci": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec --check-leaks --no-exit test/**/**.spec.js test/acceptance/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks --no-exit test/**/**.spec.js test/acceptance/",
