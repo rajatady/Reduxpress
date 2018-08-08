@@ -1,6 +1,6 @@
 {
   "name": "reduxpress",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "",
   "main": "libs",
   "scripts": {
@@ -15,11 +15,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://rajatady@bitbucket.org/reduxpress/redux.git"
+    "url": "git+https://github.com/rajatady/Reduxpress.git"
   },
   "author": "Kumar Divya Rajat <rajat.ady@gmail.com>",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/reduxpress/redux#readme",
+  "license": "MIT",
+  "homepage": "https://github.com/rajatady/Reduxpress",
   "dependencies": {
     "async": "^2.5.0",
     "bluebird": "^3.5.0",
