@@ -1,6 +1,3 @@
-/**
- * Created by kumardivyarajat on 22/09/16.
- */
 var Model;
 var Redux = require("./redux");
 var Logger = require("./libs/logger/index");
@@ -10,17 +7,32 @@ var ReduxCrud = require("./libs/crud-router/index");
 var reduxOptions = {};
 
 /**
+ * @module reduxpress
+ */
+
+/**
  * @description Set options for the redux framework
  * @example
  * {
+ *      reduxpress.setOptions({
+ *          saveTrace : false
+ *      });
  * }
- * @param options
+ * @param {Object} options
+ * @param {Boolean} options.saveTrace Whether the generated logs should be save
+ * @param {String} options.mongooseInstance The mongoose instance for saving the data when the storage engine is db
+ * @param {Boolean} options.extendIpData Whether or not to extend the IP address data
+ * @param {String} options.engine The storage engine to use. Either file or db. Defaults to db.
+ * @param {Boolean} options.auth.external Is the authentication logic local or external
+ * @param {String} options.auth.apiUrl API Url of the external authentication node
+ * @param {String} options.auth.oauthToken The oauth token to be used for authentication
+ * @param {String} options.auth.scope The scope for oauth
  */
 module.exports.setOptions = function (options) {
     reduxOptions = options;
-    if(options.mongooseInstance) {
+    if (options.mongooseInstance) {
         Model = require('./model')(options.mongooseInstance)
-    } else{
+    } else {
         Model = require('./model')(require('mongoose'))
     }
 };
@@ -54,20 +66,37 @@ module.exports.mount = function (request, response, next) {
     next();
 };
 
+/**
+ * @description- Starts the internal cron jobs
+ */
 module.exports.startCronJobs = function () {
     Cron.run();
 };
 
+/**
+ * @returns {Routes}
+ */
 module.exports.router = function () {
     return Routes;
 };
 
-
+/**
+ *
+ * @returns {Crud}
+ */
 module.exports.crud = function () {
     return ReduxCrud;
 };
 
-
+/**
+ * @export Model
+ * @description Exports the model object
+ */
 module.exports.schema = Model;
 
+
+/**
+ * @export logger
+ * @description Exports the logger object
+ */
 module.exports.logger = Logger;
