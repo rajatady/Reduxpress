@@ -20,6 +20,7 @@ var reduxOptions = {};
  * }
  * @param {Object} options
  * @param {Boolean} options.saveTrace Whether the generated logs should be save
+ * @param {Boolean} options.ipHeader Which header to parse in order to get the IP address of user. Defaults to the express default.
  * @param {String} options.mongooseInstance The mongoose instance for saving the data when the storage engine is db
  * @param {Boolean} options.extendIpData Whether or not to extend the IP address data
  * @param {String} options.engine The storage engine to use. Either file or db. Defaults to db.
@@ -47,7 +48,7 @@ module.exports.mount = function (request, response, next) {
     var model = new Model({
         method: request.method,
         route: request.protocol + '://' + request.get('host') + request.originalUrl,
-        ipAddress: request.ip,
+        ipAddress: request.headers[reduxOptions.ipHeader] || request.ip,
         appAgent: request.headers["app-agent"],
         userAgent: request.headers["user-agent"],
         accessToken: request.headers["x-access-token"] || request.query['access_token'],
