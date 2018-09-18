@@ -120,6 +120,7 @@ module.exports = function(request, response) {
     * [.startCronJobs()](#module_reduxpress.startCronJobs)
     * [.router()](#module_reduxpress.router) ⇒ <code>Routes</code>
     * [.crud()](#module_reduxpress.crud) ⇒ <code>Crud</code>
+    * [.getTestDouble(options)](#module_reduxpress.getTestDouble)
 
 <a name="module_reduxpress.schema"></a>
 
@@ -154,6 +155,7 @@ Set options for the redux framework
 | options.auth.apiUrl | <code>String</code> | API Url of the external authentication node |
 | options.auth.oauthToken | <code>String</code> | The oauth token to be used for authentication |
 | options.auth.scope | <code>String</code> | The scope for oauth |
+| options.authCallback | <code>String</code> | Callback function to be executed once the token has been validated |
 
 **Example**  
 ```js
@@ -187,6 +189,15 @@ Set options for the redux framework
 
 ### reduxpress.crud() ⇒ <code>Crud</code>
 **Kind**: static method of [<code>reduxpress</code>](#module_reduxpress)  
+<a name="module_reduxpress.getTestDouble"></a>
+
+### reduxpress.getTestDouble(options)
+**Kind**: static method of [<code>reduxpress</code>](#module_reduxpress)  
+
+| Param |
+| --- |
+| options | 
+
 <a name="Redux"></a>
 
 ## Redux
