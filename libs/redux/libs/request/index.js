@@ -215,7 +215,6 @@ Request.prototype._validate = function (params, request, where) {
 
         });
         if (hasError) {
-            console.log("Has Error");
             var err = new Error();
             err.message = errMsgs;
             err.code = 409;
