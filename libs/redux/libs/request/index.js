@@ -207,12 +207,8 @@ Request.prototype._validate = function (params, request, where) {
                     request[where][param] !== null &&
                     request[where][param] !== '') {
                     data[param] = request[where][param];
-                } else {
-                    errMsgs.push({error: "Required param " + param + " is missing."});
-                    hasError = true;
                 }
             }
-
         });
         if (hasError) {
             var err = new Error();
