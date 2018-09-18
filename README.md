@@ -146,6 +146,7 @@ Set options for the redux framework
 | --- | --- | --- |
 | options | <code>Object</code> |  |
 | options.saveTrace | <code>Boolean</code> | Whether the generated logs should be save |
+| options.ipHeader | <code>Boolean</code> | Which header to parse in order to get the IP address of user. Defaults to the express default. |
 | options.mongooseInstance | <code>String</code> | The mongoose instance for saving the data when the storage engine is db |
 | options.extendIpData | <code>Boolean</code> | Whether or not to extend the IP address data |
 | options.engine | <code>String</code> | The storage engine to use. Either file or db. Defaults to db. |
