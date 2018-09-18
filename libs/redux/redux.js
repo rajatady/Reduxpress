@@ -12,7 +12,8 @@ var Crud = require("./libs/crud/index");
 
 /**
  * @default Default Options
- * @type {{saveTrace: boolean, mongooseInstance : Object, extendIpData: boolean, engine : String, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
+ * @type {
+ * {saveTrace: boolean, authCallback : function, mongooseInstance : Object, extendIpData: boolean, engine : String, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
  */
 var defaultOptions = {
     saveTrace: true,
@@ -601,25 +602,55 @@ Redux.prototype.saveAuthDetails = function (data) {
  * @returns {Promise}
  */
 Redux.prototype.verifyToken = function (token) {
+    var that = this;
     if (typeof token === 'string') {
-        if (this.options.auth.external) {
-            return this.auth.validateExternalToken(token, this.options.auth);
-        } else {
-            return this.auth.validateToken(token);
-        }
+        return new Promise(function (resolve, reject) {
+            var promise = '';
+            if (that.options.auth.external) {
+                promise = that.auth.validateExternalToken(token, this.options.auth);
+            } else {
+                promise = that.auth.validateToken(token);
+            }
+            promise
+                .then(function (data) {
+                    return that._executedAuthCallback(data);
+                })
+                .then(function (data) {
+                    resolve(data);
+                })
+                .catch(function (err) {
+                    reject(err);
+                })
+        });
     } else if (Utils.isObject(token)) {
-        var that = this;
-        this.headersValidator(token, ["x-access-token"])
-            .then(function (data) {
-                if (that.options.auth.external) {
-                    return that.auth.validateExternalToken(token, that.options.auth);
-                } else {
-                    return that.auth.validateToken(data["x-access-token"]);
-                }
-            })
-            .catch(function (err) {
-                throw err;
-            })
+        return new Promise(function (resolve, reject) {
+            that.headersValidator(token, ["x-access-token"])
+                .then(function (data) {
+                    if (that.options.auth.external) {
+                        return that.auth.validateExternalToken(token, that.options.auth);
+                    } else {
+                        return that.auth.validateToken(data["x-access-token"]);
+                    }
+                })
+                .then(function (data) {
+                    return that._executedAuthCallback(data);
+                })
+                .then(function (data) {
+                    resolve(data);
+                })
+                .catch(function (err) {
+                    reject(err);
+                })
+        });
+
+    }
+};
+
+Redux.prototype._executedAuthCallback = function (data) {
+    if (this.options.authCallback) {
+        return this.options.authCallback(data);
+    } else {
+        return data;
     }
 };
 

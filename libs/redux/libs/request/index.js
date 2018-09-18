@@ -195,13 +195,21 @@ Request.prototype._validate = function (params, request, where) {
         var data = {};
         var hasError = false;
         _.forEach(params, function (param) {
-            if (param.indexOf("^") == -1 && typeof request[where][param] == 'undefined') {
+            if (param.indexOf("^") === -1 &&
+                (typeof request[where][param] === 'undefined' ||
+                request[where][param] === null ||
+                request[where][param] === '')) {
                 errMsgs.push({error: "Required param " + param + " is missing."});
                 hasError = true;
             } else {
                 param = param.replace("^", "");
-                if (typeof request[where][param] != "undefined") {
+                if (typeof request[where][param] !== "undefined" &&
+                    request[where][param] !== null &&
+                    request[where][param] !== '') {
                     data[param] = request[where][param];
+                } else {
+                    errMsgs.push({error: "Required param " + param + " is missing."});
+                    hasError = true;
                 }
             }
 

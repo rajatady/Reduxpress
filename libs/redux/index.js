@@ -5,6 +5,7 @@ var Cron = require("./libs/auth/cron");
 var Routes = require("./routes");
 var ReduxCrud = require("./libs/crud-router/index");
 var reduxOptions = {};
+var _ = require('lodash');
 
 /**
  * @module reduxpress
@@ -28,6 +29,7 @@ var reduxOptions = {};
  * @param {String} options.auth.apiUrl API Url of the external authentication node
  * @param {String} options.auth.oauthToken The oauth token to be used for authentication
  * @param {String} options.auth.scope The scope for oauth
+ * @param {String} options.authCallback Callback function to be executed once the token has been validated
  */
 module.exports.setOptions = function (options) {
     reduxOptions = options;
@@ -35,6 +37,10 @@ module.exports.setOptions = function (options) {
         Model = require('./model')(options.mongooseInstance)
     } else {
         Model = require('./model')(require('mongoose'))
+    }
+
+    if (options.authCallback && !_.isFunction(options.authCallback)) {
+        throw new Error('Reduxpress - The Auth Callback param should be function which returns a promise resolving the user data.')
     }
 };
 
@@ -45,6 +51,9 @@ module.exports.setOptions = function (options) {
  * @param next
  */
 module.exports.mount = function (request, response, next) {
+    if (!Model) {
+        Model = require('./model')(require('mongoose'))
+    }
     var model = new Model({
         method: request.method,
         route: request.protocol + '://' + request.get('host') + request.originalUrl,
@@ -87,6 +96,19 @@ module.exports.router = function () {
  */
 module.exports.crud = function () {
     return ReduxCrud;
+};
+
+/**
+ *
+ * @param options
+ */
+module.exports.getTestDouble = function (options) {
+    if (!Model) {
+        Model = require('./model')(require('mongoose'))
+    }
+    var model = new Model({});
+
+    return new Redux(model, options);
 };
 
 /**
