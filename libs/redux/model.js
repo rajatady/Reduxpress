@@ -19,7 +19,7 @@ module.exports = function (mongoose) {
         accessToken: String,
         accessTokenHash: String,
         refreshToken: String,
-        resolved: {type: Boolean, default: false},
+        resolved: {type: Boolean, default: false, index: true},
         ttr: {type: Number},
         userId: {type: String, index: true},
         user: {type: Object},
@@ -30,6 +30,7 @@ module.exports = function (mongoose) {
         path: {type: String, index: true},
         originalUrl: {type: String}
     }, {timestamps: true});
+    reduxSchema.index({createdAt: 1});
 
     return mongoose.model('ReduxTrace', reduxSchema);
 };
