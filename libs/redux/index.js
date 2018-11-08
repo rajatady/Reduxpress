@@ -21,12 +21,14 @@ var _ = require('lodash');
  * }
  * @param {Object} options
  * @param {Boolean} options.saveTrace Whether the generated logs should be save
+ * @param {Boolean} options.supressInitMessage Whether to suppress request entry message in the console {defaults to false}
  * @param {Boolean} options.ipHeader Which header to parse in order to get the IP address of user. Defaults to the express default.
  * @param {String} options.mongooseInstance The mongoose instance for saving the data when the storage engine is db
  * @param {Boolean} options.extendIpData Whether or not to extend the IP address data
  * @param {String} options.engine The storage engine to use. Either file or db. Defaults to db.
  * @param {Boolean} options.auth.external Is the authentication logic local or external
  * @param {String} options.auth.apiUrl API Url of the external authentication node
+ * @param {String} options.auth.method The HTTP method to use {defaults to GET}
  * @param {String} options.auth.oauthToken The oauth token to be used for authentication
  * @param {String} options.auth.scope The scope for oauth
  * @param {String} options.authCallback Callback function to be executed once the token has been validated
@@ -72,7 +74,9 @@ module.exports.mount = function (request, response, next) {
 
     var redux = new Redux(model, reduxOptions);
     request.redux = redux;
-    redux.printInitMessage();
+    if(!reduxOptions.supressInitMessage) {
+        redux.printInitMessage();
+    }
     next();
 };
 

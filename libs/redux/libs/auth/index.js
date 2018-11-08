@@ -55,18 +55,26 @@ Auth.prototype.validateExternalToken = function (token, authOptions) {
     return new Promise(function (resolve, reject) {
         request(authOptions.apiUrl, {
             headers: {
-                "x-access-token": token
+                'x-access-token': token
             },
-            method: "POST",
+            method: authOptions.method || 'GET',
             json: {
                 oauth: authOptions.oauthToken,
                 token: token
             }
         }, function (err, rsp, body) {
             if (err) {
-                reject(err);
+                reject(err)
             } else {
-                resolve(body.message.users[0]);
+                var user = body.message.users[0]
+                if (user.id && !user._id) {
+                    user._id = user.id
+                }
+                if (!user.id && user._id) {
+                    user.id = user._id
+                }
+
+                resolve(user)
             }
         })
     })

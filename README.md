@@ -147,12 +147,14 @@ Set options for the redux framework
 | --- | --- | --- |
 | options | <code>Object</code> |  |
 | options.saveTrace | <code>Boolean</code> | Whether the generated logs should be save |
+| options.supressInitMessage | <code>Boolean</code> | Whether to suppress request entry message in the console {defaults to false} |
 | options.ipHeader | <code>Boolean</code> | Which header to parse in order to get the IP address of user. Defaults to the express default. |
 | options.mongooseInstance | <code>String</code> | The mongoose instance for saving the data when the storage engine is db |
 | options.extendIpData | <code>Boolean</code> | Whether or not to extend the IP address data |
 | options.engine | <code>String</code> | The storage engine to use. Either file or db. Defaults to db. |
 | options.auth.external | <code>Boolean</code> | Is the authentication logic local or external |
 | options.auth.apiUrl | <code>String</code> | API Url of the external authentication node |
+| options.auth.method | <code>String</code> | The HTTP method to use {defaults to GET} |
 | options.auth.oauthToken | <code>String</code> | The oauth token to be used for authentication |
 | options.auth.scope | <code>String</code> | The scope for oauth |
 | options.authCallback | <code>String</code> | Callback function to be executed once the token has been validated |
