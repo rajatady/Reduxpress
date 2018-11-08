@@ -607,7 +607,7 @@ Redux.prototype.verifyToken = function (token) {
         return new Promise(function (resolve, reject) {
             var promise = '';
             if (that.options.auth.external) {
-                promise = that.auth.validateExternalToken(token, this.options.auth);
+                promise = that.auth.validateExternalToken(token, that.options.auth);
             } else {
                 promise = that.auth.validateToken(token);
             }
