@@ -1,6 +1,6 @@
 {
   "name": "reduxpress",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "description": "",
   "main": "libs",
   "scripts": {
@@ -25,8 +25,8 @@
     "bluebird": "^3.5.0",
     "chalk": "^2.1.0",
     "console.table": "^0.9.1",
-    "iplocation": "^5.0.1",
-    "jsonwebtoken": "^7.4.3",
+    "iplocation": "^6.0.4",
+    "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.10",
     "mongoose": "^5.2.6",
     "msg91-rdx": "^1.0.4",
@@ -41,9 +41,9 @@
     "express": "^4.16.3",
     "istanbul": "0.4.5",
     "jsdoc-to-markdown": "^4.0.1",
-    "mocha": "^3.5.3",
+    "mocha": "^5.2.0",
     "should": "13.1.0",
     "sinon": "^5.0.10",
-    "supertest": "1.2.0"
+    "supertest": "^3.3.0"
   }
 }

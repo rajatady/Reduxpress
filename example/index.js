@@ -68,7 +68,7 @@ app.post('/', function (req, res) {
 app.get('/testAuthCallback', function (req, res) {
     var redux = req.redux;
 
-    redux.generateToken({name: 'Kumar Rajat'}, 60, 60, 'seconds')
+    redux.generateToken({name: 'TEST USER'}, 60, 60, 'seconds')
         .then(function (token) {
             req.headers['x-access-token'] = token['x_access_token'];
             return redux.tokenValidator(req)
@@ -81,6 +81,36 @@ app.get('/testAuthCallback', function (req, res) {
             console.error(err);
             redux.sendError(res, err);
         });
+});
+
+app.get('/getToken', function (req, res) {
+    var redux = req.redux;
+
+
+    redux.generateToken({name : 'TEST USER'}, 60, 60, 'seconds')
+        .then(function (value) {
+            redux.sendSuccess(res, value, 'token')
+        })
+        .catch(function (reason) {
+            redux.sendError(res, reason)
+        })
+});
+
+app.get('/verifyToken/:token', function (req, res) {
+    var redux = req.redux;
+
+    redux
+        .paramsValidator(req, ['token'])
+        .then(function (result) {
+            return redux.verifyToken(result.token);
+        })
+        .then(function (value) {
+            console.log(value)
+            redux.sendSuccess(res, value, 'tokenResult')
+        })
+        .catch(function (reason) {
+            redux.sendError(res, reason)
+        })
 });
 
 app.listen(port, function () {
