@@ -6,7 +6,7 @@ var Utils = require("./libs/utils/index");
 var Response = require("./libs/response/index");
 var Auth = require("./libs/auth/index");
 var Err = require("./libs/error/index");
-var ipLocation = require('iplocation');
+var ipLocation = require('iplocation').default;
 
 var Crud = require("./libs/crud/index");
 
@@ -323,7 +323,6 @@ var _save = function (that, resolved, ttr) {
                     }
                 })
                 .catch(function (err) {
-                    console.log(err);
                     that.logger.errorLine("3. Error while saving data ...");
                     that.err(err);
                     if (resolved) {
