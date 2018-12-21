@@ -656,7 +656,7 @@ Redux.prototype._executedAuthCallback = function (data) {
 
 Redux.prototype._executeOnErrorCallback = function (error) {
     if (this.options.onError && _.isFunction(this.options.onError)) {
-        return this.options.onError(error);
+        return this.options.onError(error, this.model);
     }
 };
 
