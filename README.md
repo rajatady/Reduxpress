@@ -158,6 +158,7 @@ Set options for the redux framework
 | options.auth.oauthToken | <code>String</code> | The oauth token to be used for authentication |
 | options.auth.scope | <code>String</code> | The scope for oauth |
 | options.authCallback | <code>String</code> | Callback function to be executed once the token has been validated |
+| options.onError | <code>String</code> | Callback function to be executed when an error is encountered |
 
 **Example**  
 ```js
