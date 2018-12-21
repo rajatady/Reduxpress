@@ -28,6 +28,9 @@ reduxpress.setOptions({
             userData._id = 'adsad';
             resolve(userData);
         });
+    },
+    onError : function (error) {
+        console.log('Error', error);
     }
 });
 

@@ -307,6 +307,7 @@ Redux.prototype.sendError = function (response, data, message) {
     this.err(data);
     this.response.error(response, data, message);
     this._saveTrace(false);
+    this._executeOnErrorCallback(data);
 };
 
 var _save = function (that, resolved, ttr) {
@@ -449,8 +450,7 @@ Redux.prototype.interceptor = function (request, params, findDataIn) {
                     return self.bodyValidator(request, params);
                 else if (findDataIn == "headers") {
                     return self.headersValidator(request, params);
-                }
-                else if (findDataIn == "params")
+                } else if (findDataIn == "params")
                     return self.paramsValidator(request, params);
             })
             .then(function (data) {
@@ -646,10 +646,17 @@ Redux.prototype.verifyToken = function (token) {
 };
 
 Redux.prototype._executedAuthCallback = function (data) {
-    if (this.options.authCallback) {
+    if (this.options.authCallback && _.isFunction(this.options.authCallback)) {
         return this.options.authCallback(data);
     } else {
         return data;
+    }
+};
+
+
+Redux.prototype._executeOnErrorCallback = function (error) {
+    if (this.options.onError && _.isFunction(this.options.onError)) {
+        return this.options.onError(error);
     }
 };
 

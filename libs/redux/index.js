@@ -32,6 +32,7 @@ var _ = require('lodash');
  * @param {String} options.auth.oauthToken The oauth token to be used for authentication
  * @param {String} options.auth.scope The scope for oauth
  * @param {String} options.authCallback Callback function to be executed once the token has been validated
+ * @param {String} options.onError Callback function to be executed when an error is encountered
  */
 module.exports.setOptions = function (options) {
     reduxOptions = options;
@@ -43,6 +44,10 @@ module.exports.setOptions = function (options) {
 
     if (options.authCallback && !_.isFunction(options.authCallback)) {
         throw new Error('Reduxpress - The Auth Callback param should be function which returns a promise resolving the user data.')
+    }
+
+    if (options.onError && !_.isFunction(options.onError)) {
+        throw new Error('Reduxpress - The onError Callback param should be function')
     }
 };
 
@@ -74,7 +79,7 @@ module.exports.mount = function (request, response, next) {
 
     var redux = new Redux(model, reduxOptions);
     request.redux = redux;
-    if(!reduxOptions.supressInitMessage) {
+    if (!reduxOptions.supressInitMessage) {
         redux.printInitMessage();
     }
     next();
