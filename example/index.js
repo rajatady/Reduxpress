@@ -29,8 +29,8 @@ reduxpress.setOptions({
             resolve(userData);
         });
     },
-    onError : function (error) {
-        console.log('Error', error);
+    onError : function (error, reduxInstance) {
+        console.log('Error', error, reduxInstance);
     }
 });
 
