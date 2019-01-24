@@ -108,6 +108,25 @@ module.exports.crud = function () {
 };
 
 /**
+ * @method tokenValidatorMiddleware
+ * @param request
+ * @param response
+ * @param next
+ */
+module.exports.tokenValidatorMiddleware = function (request, response, next) {
+    var redux = request.redux;
+
+    redux.tokenValidator(request)
+        .then(function (value) {
+            next()
+        })
+        .catch(function (reason) {
+            redux.sendError(response, reason, 'Unauthorized');
+        })
+}
+
+
+/**
  *
  * @param options
  */
