@@ -42,6 +42,7 @@
     "istanbul": "0.4.5",
     "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.2.0",
+    "mongoose-sql": "^1.0.45",
     "should": "13.1.0",
     "sinon": "^5.0.10",
     "supertest": "^3.3.0"

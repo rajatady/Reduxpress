@@ -1,9 +1,20 @@
 var express = require('express');
 var app = express();
 var reduxpress = require('../libs');
-var port = process.env.PORT || 8100;
+var port = process.env.PORT || 8000;
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var mongoosePG = require("mongoose-sql");
+
+mongoosePG.connect({
+    client: "pg",
+    connection: {
+        host: "127.0.0.1",
+        user: "postgres",
+        password: "postgres",
+        database: "postgres"
+    }
+});
 
 mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
     if (err) {
@@ -23,6 +34,7 @@ reduxpress.setOptions({
     auth: {
         external: false
     },
+    mongooseInstance: mongoosePG,
     authCallback: function (userData) {
         return new Promise(function (resolve, reject) {
             userData._id = 'adsad';
@@ -87,7 +99,7 @@ app.get('/getToken', function (req, res) {
     var redux = req.redux;
 
 
-    redux.generateToken({name : 'TEST USER'}, 60, 60, 'seconds')
+    redux.generateToken({name: 'TEST USER'}, 60, 60, 'seconds')
         .then(function (value) {
             redux.sendSuccess(res, value, 'token')
         })

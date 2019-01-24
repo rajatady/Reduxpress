@@ -30,7 +30,8 @@ module.exports = function (mongoose) {
         path: {type: String, index: true},
         originalUrl: {type: String}
     }, {timestamps: true});
-    reduxSchema.index({createdAt: 1});
+    if (reduxSchema.index)
+        reduxSchema.index({createdAt: 1});
 
     return mongoose.model('ReduxTrace', reduxSchema);
 };
