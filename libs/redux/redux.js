@@ -528,7 +528,7 @@ Redux.prototype.tokenValidator = function (request) {
                     return self.verifyToken(data['x-access-token']);
                 })
                 .then(function (result) {
-                    self.currentUser = result;
+                    self.setCurrentUser(result);
                     if (self.allowedRoles.length > 0) {
                         var valid = self._checkRolesValidity();
                         if (!valid) {
@@ -546,7 +546,7 @@ Redux.prototype.tokenValidator = function (request) {
                     return self.verifyToken(data['access_token']);
                 })
                 .then(function (result) {
-                    self.currentUser = result;
+                    self.setCurrentUser(result);
                     if (self.allowedRoles.length > 0) {
                         var valid = self._checkRolesValidity();
                         if (!valid) {
