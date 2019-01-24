@@ -502,15 +502,20 @@ Redux.prototype.putInterceptor = function (request, bodyData, params) {
 /**
  * @memberOf Redux
  * @param value
+ * @param debug
  * @returns {Redux}
  */
-Redux.prototype.invokeAcl = function (value) {
+Redux.prototype.invokeAcl = function (value, debug) {
     var that = this;
     // _.forEach(Array.prototype.slice.call(arguments[0]), function (value) {
     //     that.allowedRoles.push(value);
     // });
     that.allowedRoles = value.split(" ");
     // console.log("invokeAcl", that.allowedRoles);
+    if(debug) {
+        console.log('[REDUX DEBUG] : Allowed Rules - ' + that.allowedRoles);
+    }
+
     return that;
 };
 

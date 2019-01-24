@@ -109,20 +109,34 @@ module.exports.crud = function () {
 
 /**
  * @method tokenValidatorMiddleware
- * @param request
- * @param response
- * @param next
+ * @param aclRules
+ * @param debug
  */
-module.exports.tokenValidatorMiddleware = function (request, response, next) {
-    var redux = request.redux;
+module.exports.tokenValidatorMiddleware = function (aclRules, debug) {
+    return function (request, response, next) {
+        var redux = request.redux;
+        if (aclRules) {
+            if (debug) {
+                console.log('[REDUX DEBUG] : ACL Rules - ' + aclRules);
+            }
+            redux = redux.invokeAcl(aclRules);
+        }
 
-    redux.tokenValidator(request)
-        .then(function (value) {
-            next()
-        })
-        .catch(function (reason) {
-            redux.sendError(response, reason, 'Unauthorized');
-        })
+        redux
+            .tokenValidator(request)
+            .then(function (value) {
+                if (debug) {
+                    console.log('[REDUX DEBUG] : Token Valid - ' + value);
+                }
+                next()
+            })
+            .catch(function (reason) {
+                if (debug) {
+                    console.log('[REDUX DEBUG] : Token InValid - ' + reason.message);
+                }
+                redux.sendError(response, reason, 'Unauthorized');
+            })
+    }
 }
 
 

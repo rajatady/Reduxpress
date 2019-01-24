@@ -113,14 +113,17 @@ module.exports = function(request, response) {
 ## reduxpress
 
 * [reduxpress](#module_reduxpress)
-    * [.schema](#module_reduxpress.schema)
-    * [.logger](#module_reduxpress.logger)
-    * [.setOptions(options)](#module_reduxpress.setOptions)
-    * [.mount(request, response, next)](#module_reduxpress.mount)
-    * [.startCronJobs()](#module_reduxpress.startCronJobs)
-    * [.router()](#module_reduxpress.router) ⇒ <code>Routes</code>
-    * [.crud()](#module_reduxpress.crud) ⇒ <code>Crud</code>
-    * [.getTestDouble(options)](#module_reduxpress.getTestDouble)
+    * _static_
+        * [.schema](#module_reduxpress.schema)
+        * [.logger](#module_reduxpress.logger)
+        * [.setOptions(options)](#module_reduxpress.setOptions)
+        * [.mount(request, response, next)](#module_reduxpress.mount)
+        * [.startCronJobs()](#module_reduxpress.startCronJobs)
+        * [.router()](#module_reduxpress.router) ⇒ <code>Routes</code>
+        * [.crud()](#module_reduxpress.crud) ⇒ <code>Crud</code>
+        * [.getTestDouble(options)](#module_reduxpress.getTestDouble)
+    * _inner_
+        * [~tokenValidatorMiddleware(request, response, next)](#module_reduxpress..tokenValidatorMiddleware)
 
 <a name="module_reduxpress.schema"></a>
 
@@ -200,6 +203,17 @@ Set options for the redux framework
 | Param |
 | --- |
 | options | 
+
+<a name="module_reduxpress..tokenValidatorMiddleware"></a>
+
+### reduxpress~tokenValidatorMiddleware(request, response, next)
+**Kind**: inner method of [<code>reduxpress</code>](#module_reduxpress)  
+
+| Param |
+| --- |
+| request | 
+| response | 
+| next | 
 
 <a name="Redux"></a>
 
