@@ -8,8 +8,6 @@ var Auth = require("./libs/auth/index");
 var Err = require("./libs/error/index");
 var ipLocation = require('iplocation').default;
 
-var Crud = require("./libs/crud/index");
-
 /**
  * @default Default Options
  * @type {
@@ -46,7 +44,6 @@ function Redux(model, options) {
     this.utils = Utils;
     this.auth = new Auth(options.secret || 'secret');
     this.error = Err;
-    this.crud = Crud;
     this.startTime = new Date().getTime();
     this.endTime = "";
     this.allowedRoles = [];
