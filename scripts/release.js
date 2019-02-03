@@ -29,7 +29,7 @@ var execa = require('execa')
 var semver = require('semver')
 var inquirer = require('inquirer')
 
-var curVersion = require('../package').version
+var curVersion = require('../lerna').version
 
 var release = async () => {
     console.log(`Current version: ${curVersion}`)
@@ -41,7 +41,7 @@ var release = async () => {
         }
     )
     var bumpChoices = bumps.map(b => ({name: `${b} (${versions[b]})`, value: b})
-)
+    )
 
     function getVersion(answers) {
         return answers.customVersion || versions[answers.bump]
@@ -120,12 +120,13 @@ var release = async () => {
         '*'
     ]
 
-    await
-        execa('yarn', ['changelog'])
-    await
-        execa('git', ['add', '-A'], {stdio: 'inherit'})
-    await
-        execa('git', ['commit', '-m', `chore: ${version} changelog`], {stdio: 'inherit'})
+    console.log(`lerna ${releaseArguments.join(' ')}`)
+
+    await execa(require.resolve('lerna/cli'), releaseArguments, {stdio: 'inherit'})
+
+    await execa('yarn', ['changelog'])
+    await execa('git', ['add', '-A'], {stdio: 'inherit'})
+    await execa('git', ['commit', '-m', `chore: ${version} changelog`], {stdio: 'inherit'})
 }
 
 release().catch(err => {
