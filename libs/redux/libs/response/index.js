@@ -55,8 +55,8 @@ Response.prototype.success = function (response, data, key) {
     }
 
     if (this._extras.length > 0) {
-        this._extras.forEach(function (o,i) {
-            builderData = utils.merge_options(builderData,o);
+        this._extras.forEach(function (o, i) {
+            builderData = utils.merge_options(builderData, o);
         });
     }
     if (utils.isArray(data)) {
@@ -68,6 +68,16 @@ Response.prototype.success = function (response, data, key) {
         builderData.message[key] = data;
     }
     return response.json(builderData);
+};
+
+/**
+ * @param response
+ * @param data
+ * @param status
+ * @returns {*}
+ */
+Response.prototype.raw = function (response, data, status) {
+    return response.status(status || 200).json(data);
 };
 
 /**
@@ -188,6 +198,6 @@ Response.prototype._suppress = function (bcData) {
 // }
 
 
-module.exports =  Response;
+module.exports = Response;
 
 

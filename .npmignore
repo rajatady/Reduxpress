@@ -49,3 +49,11 @@ example
 .eslintignore
 .eslintrc
 .gitignore
+
+.idea
+test
+
+.editorconfig
+
+_config.yml
+

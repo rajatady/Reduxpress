@@ -1,0 +1,114 @@
+<h1>Reduxpress</h1>
+<hr>
+
+A utility framework built on top of [expressJS] to provide single line implementations for commonly used tasks.
+
+[![view on npm](https://img.shields.io/npm/v/reduxpress.svg)](https://www.npmjs.org/package/reduxpress)
+[![view on npm](https://img.shields.io/npm/dm/reduxpress.svg)](https://www.npmjs.org/package/reduxpress)
+
+***
+
+It provides the following functionality
+* Request Validation
+* Formatted Console Logs
+* Authentication
+* Response Handling
+* Error Handling
+* Object Logging in File or DB
+
+### Example Usage
+
+1. Install the reduxpress module
+
+* `npm i reduxpress --save`
+
+2. Configure the module before the endpoints
+
+```javascript
+// server.js
+
+import reduxpress from 'reduxpress'
+// var reduxpress = require('reduxpress')
+import api from './api';
+// var api = require('./api');
+
+...
+
+reduxpress.setOptions({
+    saveTrace : true,
+    // default - false | Flag to save the data generated with each request,
+    secret : '<YOUR JWT SECRET HERE>'
+})
+
+    ...
+```
+
+3. Mount the object as a middleware before the endpoints you want to have reduxpress included in
+
+```javascript
+// server.js
+
+...
+app.use(reduxpress.mount);
+// OR app.use('/api', reduxpress.mount);
+
+...
+
+app.post('/api', api);
+
+...
+
+```
+
+4. Access the redux object from the request object directly. Each redux object is unique and is saved separately for all the incoming requests
+
+```javascript
+// api.js
+
+module.exports = function(request, response) {
+    var redux = request.redux;
+
+    redux
+        .bodyValidator(response, ['name', '^email'])
+        .then(function(body) {
+            // body should now contain name property and an optional email
+            redux.sendSuccess(response, body, 'body');
+        })
+        .catch(function(err) {
+            // if the name property is not present in the body of the request, an error will be thrown
+            redux.sendError(response, err);
+        })
+}
+
+```
+
+
+    {{>main}}
+
+* * *
+
+<h2>LICENSE</h2>
+MIT License
+
+Copyright (c) 2017-2018 Kumar DIvya Rajat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+[expressJS]: (https://github.com/expressjs/express)

@@ -1,6 +1,3 @@
-/**
- * Created by kumardivyarajat on 23/09/16.
- */
 var Promise = require('bluebird');
 var _ = require('lodash');
 var Logger = require("./libs/logger/index.js");
@@ -9,14 +6,14 @@ var Utils = require("./libs/utils/index");
 var Response = require("./libs/response/index");
 var Auth = require("./libs/auth/index");
 var Err = require("./libs/error/index");
-var ipLocation = require('iplocation');
+var ipLocation = require('iplocation').default;
 
 var Crud = require("./libs/crud/index");
 
 /**
- *
  * @default Default Options
- * @type {{saveTrace: boolean, extendIpData: boolean, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
+ * @type {
+ * {saveTrace: boolean, authCallback : function, mongooseInstance : Object, extendIpData: boolean, engine : String, auth: {external: boolean, apiUrl: string, oauthToken: string, scope: string}}}
  */
 var defaultOptions = {
     saveTrace: true,
@@ -30,17 +27,21 @@ var defaultOptions = {
     }
 };
 
+
 /**
- * @memberOf request
+ * @class Redux
  * @param model
  * @param options
  * @constructor
  */
 function Redux(model, options) {
-    this.options = options || defaultOptions;
+    if (!options) {
+        options = {};
+    }
+    this.options = _.merge(defaultOptions, options);
     this.model = model;
     this.logger = Logger;
-    this.request = Request;
+    this.request = new Request();
     this.response = new Response();
     this.utils = Utils;
     this.auth = new Auth(options.secret || 'secret');
@@ -59,8 +60,8 @@ function Redux(model, options) {
 
 
 /***
- * @description Prints the init message
  * @memberOf Redux
+ * @description Prints the init message
  */
 Redux.prototype.printInitMessage = function () {
     if (process.env.NODE_ENV !== "test")
@@ -74,7 +75,7 @@ Redux.prototype.printInitMessage = function () {
 /****************************** START LOGGER ******************************/
 
 /**
- *
+ * @memberOf Redux
  * @return {Redux.logger|*}
  */
 Redux.prototype.logger = function () {
@@ -227,11 +228,18 @@ Redux.prototype.objectValidator = function (request, objectName, keys) {
 /********************************** END **********************************/
 
 /****************************** START UTILS ******************************/
-
+/**
+ * @memberOf Redux
+ * @returns Utils
+ */
 Redux.prototype.utils = function () {
     return this.utils;
 };
 
+/**
+ * @memberOf Redux
+ * @param data
+ */
 Redux.prototype.idValidator = function (data) {
     return this.utils.validateId(data);
 };
@@ -240,11 +248,21 @@ Redux.prototype.idValidator = function (data) {
 
 /****************************** START RESPONSE ******************************/
 
+/**
+ * @memberOf Redux
+ * @returns Response
+ */
 Redux.prototype.response = function () {
     return this.response;
 };
 
 
+/**
+ * @memberOf Redux
+ * @param key
+ * @param value
+ * @returns {Redux}
+ */
 Redux.prototype.setExtra = function (key, value) {
     this.response.setExtra(key, value);
     return this;
@@ -255,6 +273,7 @@ Redux.prototype.setExtra = function (key, value) {
  * @param response
  * @param data
  * @param key
+ * @description Send back data to the client with the pre defined schema
  */
 Redux.prototype.sendSuccess = function (response, data, key) {
     if (!key) {
@@ -264,40 +283,31 @@ Redux.prototype.sendSuccess = function (response, data, key) {
     this._saveTrace(true);
 };
 
+
+/**
+ * @memberOf Redux
+ * @param response
+ * @param data
+ * @param status
+ * @description Sends response as raw JSON passed as parameter to the client instead of enforcing a schema
+ */
+Redux.prototype.sendJSON = function (response, data, status) {
+    this.response.raw(response, data, status);
+    this._saveTrace(!(data instanceof Error));
+};
+
 /**
  * @memberOf Redux
  * @param response
  * @param data
  * @param message
+ * @description Send back error to the client
  */
 Redux.prototype.sendError = function (response, data, message) {
     this.err(data);
     this.response.error(response, data, message);
     this._saveTrace(false);
-    var self = this;
-    // BugsSnag.onBeforeNotify(function (notification) {
-    //     var metaData = notification.events[0].metaData;
-    //     // console.log(notification);
-    //     var event = notification.events[0];
-    //     // modify meta-data
-    //     if (Array.isArray(data.message)) {
-    //         metaData.error = data.message.map(r => r.error + ", ");
-    //     } else {
-    //         metaData.error = data.message;
-    //     }
-    //     if (self.currentUser) {
-    //         event.user = {
-    //             id: self.currentUser._id,
-    //             name: self.currentUser.name,
-    //             email: self.currentUser.email,
-    //             mobile: self.currentUser.mobile,
-    //             role: self.currentUser.role
-    //         };
-    //     }
-    //     metaData.trace = data.stack;
-    //     event.releaseStage = ENV;
-    // });
-    // BugsSnag.notify(data);
+    this._executeOnErrorCallback(data);
 };
 
 var _save = function (that, resolved, ttr) {
@@ -314,7 +324,6 @@ var _save = function (that, resolved, ttr) {
                     }
                 })
                 .catch(function (err) {
-                    console.log(err);
                     that.logger.errorLine("3. Error while saving data ...");
                     that.err(err);
                     if (resolved) {
@@ -339,7 +348,7 @@ var _save = function (that, resolved, ttr) {
                 data = JSON.parse(data);
                 if (!data.traces) {
                     data.traces = [];
-                }2
+                }
                 data.traces.push(that.model);
             } else {
                 data = {
@@ -366,6 +375,7 @@ var _save = function (that, resolved, ttr) {
  *
  * @param resolved
  * @private
+ * @description Save the trace
  */
 Redux.prototype._saveTrace = function (resolved) {
     var that = this;
@@ -399,6 +409,7 @@ Redux.prototype._saveTrace = function (resolved) {
 
 /***
  * @memberOf Redux
+ * @description Suppress the fields from the response
  */
 Redux.prototype.suppress = function () {
     this.response.suppressFields(arguments);
@@ -417,6 +428,14 @@ Redux.prototype.auth = function () {
     return this.auth;
 };
 
+/**
+ * @memberOf Redux
+ * @returns {Redux}
+ */
+Redux.prototype.attachData = function() {
+    this.request._attachData(arguments);
+    return this;
+}
 
 /**
  * @memberOf Redux
@@ -434,13 +453,15 @@ Redux.prototype.interceptor = function (request, params, findDataIn) {
                         throw self.generateError(403, "Unauthorized");
                     }
                 }
-                if (findDataIn == 'body')
+                if (findDataIn === 'body') {
                     return self.bodyValidator(request, params);
-                else if (findDataIn == "headers") {
-                    return self.headersValidator(request, params);
                 }
-                else if (findDataIn == "params")
+                else if (findDataIn === "headers") {
+                    return self.headersValidator(request, params);
+                } else if (findDataIn === "params")
                     return self.paramsValidator(request, params);
+                else if (findDataIn === "query")
+                    return self.queryValidator(request, params);
             })
             .then(function (data) {
                 resolve(data);
@@ -451,11 +472,23 @@ Redux.prototype.interceptor = function (request, params, findDataIn) {
     });
 };
 
+
+/**
+ * @memberOf Redux
+ * @returns {boolean}
+ * @private
+ */
 Redux.prototype._checkRolesValidity = function () {
     // console.log("_checkRolesValidity", this.allowedRoles, this.currentUser);
     return _.includes(this.allowedRoles, this.currentUser.role);
 };
 
+/**
+ * @memberOf Redux
+ * @param request
+ * @param bodyData
+ * @param params
+ */
 Redux.prototype.putInterceptor = function (request, bodyData, params) {
     var self = this;
     return new Promise(function (resolve, reject) {
@@ -475,18 +508,30 @@ Redux.prototype.putInterceptor = function (request, bodyData, params) {
     });
 };
 
-Redux.prototype.invokeAcl = function (value) {
+
+/**
+ * @memberOf Redux
+ * @param value
+ * @param debug
+ * @returns {Redux}
+ */
+Redux.prototype.invokeAcl = function (value, debug) {
     var that = this;
     // _.forEach(Array.prototype.slice.call(arguments[0]), function (value) {
     //     that.allowedRoles.push(value);
     // });
     that.allowedRoles = value.split(" ");
     // console.log("invokeAcl", that.allowedRoles);
+    if(debug) {
+        console.log('[REDUX DEBUG] : Allowed Rules - ' + that.allowedRoles);
+    }
+
     return that;
 };
 
 
 /**
+ * @memberOf Redux
  * @param request
  */
 Redux.prototype.tokenValidator = function (request) {
@@ -498,7 +543,7 @@ Redux.prototype.tokenValidator = function (request) {
                     return self.verifyToken(data['x-access-token']);
                 })
                 .then(function (result) {
-                    self.currentUser = result;
+                    self.setCurrentUser(result);
                     if (self.allowedRoles.length > 0) {
                         var valid = self._checkRolesValidity();
                         if (!valid) {
@@ -516,7 +561,7 @@ Redux.prototype.tokenValidator = function (request) {
                     return self.verifyToken(data['access_token']);
                 })
                 .then(function (result) {
-                    self.currentUser = result;
+                    self.setCurrentUser(result);
                     if (self.allowedRoles.length > 0) {
                         var valid = self._checkRolesValidity();
                         if (!valid) {
@@ -557,7 +602,7 @@ Redux.prototype.addTag = function (tags) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param data
  */
 Redux.prototype.saveAuthDetails = function (data) {
@@ -571,25 +616,62 @@ Redux.prototype.saveAuthDetails = function (data) {
  * @returns {Promise}
  */
 Redux.prototype.verifyToken = function (token) {
+    var that = this;
     if (typeof token === 'string') {
-        if (this.options.auth.external) {
-            return this.auth.validateExternalToken(token, this.options.auth);
-        } else {
-            return this.auth.validateToken(token);
-        }
+        return new Promise(function (resolve, reject) {
+            var promise = '';
+            if (that.options.auth.external) {
+                promise = that.auth.validateExternalToken(token, that.options.auth);
+            } else {
+                promise = that.auth.validateToken(token);
+            }
+            promise
+                .then(function (data) {
+                    return that._executedAuthCallback(data);
+                })
+                .then(function (data) {
+                    resolve(data);
+                })
+                .catch(function (err) {
+                    reject(err);
+                })
+        });
     } else if (Utils.isObject(token)) {
-        var that = this;
-        this.headersValidator(token, ["x-access-token"])
-            .then(function (data) {
-                if (that.options.auth.external) {
-                    return that.auth.validateExternalToken(token, that.options.auth);
-                } else {
-                    return that.auth.validateToken(data["x-access-token"]);
-                }
-            })
-            .catch(function (err) {
-                throw err;
-            })
+        return new Promise(function (resolve, reject) {
+            that.headersValidator(token, ["x-access-token"])
+                .then(function (data) {
+                    if (that.options.auth.external) {
+                        return that.auth.validateExternalToken(token, that.options.auth);
+                    } else {
+                        return that.auth.validateToken(data["x-access-token"]);
+                    }
+                })
+                .then(function (data) {
+                    return that._executedAuthCallback(data);
+                })
+                .then(function (data) {
+                    resolve(data);
+                })
+                .catch(function (err) {
+                    reject(err);
+                })
+        });
+
+    }
+};
+
+Redux.prototype._executedAuthCallback = function (data) {
+    if (this.options.authCallback && _.isFunction(this.options.authCallback)) {
+        return this.options.authCallback(data);
+    } else {
+        return data;
+    }
+};
+
+
+Redux.prototype._executeOnErrorCallback = function (error) {
+    if (this.options.onError && _.isFunction(this.options.onError)) {
+        return this.options.onError(error, this.model);
     }
 };
 
@@ -628,7 +710,7 @@ Redux.prototype.verifyOTP = function (secret, OTP, options) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param code
  * @param message
  * @return {*}
@@ -638,7 +720,7 @@ Redux.prototype.generateError = function (code, message) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param mobile
  * @param message
  * @return {bluebird}
@@ -658,7 +740,7 @@ Redux.prototype.sendSingleSMS = function (mobile, message) {
 };
 
 /**
- *
+ * @memberOf Redux
  * @param data
  * @return {Redux}
  */
