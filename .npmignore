@@ -53,3 +53,7 @@ example
 .idea
 test
 
+.editorconfig
+
+_config.yml
+

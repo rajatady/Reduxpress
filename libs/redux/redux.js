@@ -41,7 +41,7 @@ function Redux(model, options) {
     this.options = _.merge(defaultOptions, options);
     this.model = model;
     this.logger = Logger;
-    this.request = Request;
+    this.request = new Request();
     this.response = new Response();
     this.utils = Utils;
     this.auth = new Auth(options.secret || 'secret');
@@ -349,7 +349,6 @@ var _save = function (that, resolved, ttr) {
                 if (!data.traces) {
                     data.traces = [];
                 }
-                2
                 data.traces.push(that.model);
             } else {
                 data = {
@@ -429,6 +428,14 @@ Redux.prototype.auth = function () {
     return this.auth;
 };
 
+/**
+ * @memberOf Redux
+ * @returns {Redux}
+ */
+Redux.prototype.attachData = function() {
+    this.request._attachData(arguments);
+    return this;
+}
 
 /**
  * @memberOf Redux
@@ -446,12 +453,15 @@ Redux.prototype.interceptor = function (request, params, findDataIn) {
                         throw self.generateError(403, "Unauthorized");
                     }
                 }
-                if (findDataIn == 'body')
+                if (findDataIn === 'body') {
                     return self.bodyValidator(request, params);
-                else if (findDataIn == "headers") {
+                }
+                else if (findDataIn === "headers") {
                     return self.headersValidator(request, params);
-                } else if (findDataIn == "params")
+                } else if (findDataIn === "params")
                     return self.paramsValidator(request, params);
+                else if (findDataIn === "query")
+                    return self.queryValidator(request, params);
             })
             .then(function (data) {
                 resolve(data);

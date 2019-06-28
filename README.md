@@ -123,7 +123,7 @@ module.exports = function(request, response) {
         * [.crud()](#module_reduxpress.crud) ⇒ <code>Crud</code>
         * [.getTestDouble(options)](#module_reduxpress.getTestDouble)
     * _inner_
-        * [~tokenValidatorMiddleware(request, response, next)](#module_reduxpress..tokenValidatorMiddleware)
+        * [~tokenValidatorMiddleware(aclRules, debug)](#module_reduxpress..tokenValidatorMiddleware)
 
 <a name="module_reduxpress.schema"></a>
 
@@ -206,14 +206,13 @@ Set options for the redux framework
 
 <a name="module_reduxpress..tokenValidatorMiddleware"></a>
 
-### reduxpress~tokenValidatorMiddleware(request, response, next)
+### reduxpress~tokenValidatorMiddleware(aclRules, debug)
 **Kind**: inner method of [<code>reduxpress</code>](#module_reduxpress)  
 
 | Param |
 | --- |
-| request | 
-| response | 
-| next | 
+| aclRules | 
+| debug | 
 
 <a name="Redux"></a>
 
@@ -240,9 +239,10 @@ Redux
     * [.sendJSON(response, data, status)](#Redux+sendJSON)
     * [.sendError(response, data, message)](#Redux+sendError)
     * [.auth()](#Redux+auth) ⇒ <code>exports.auth</code> \| <code>\*</code>
+    * [.attachData()](#Redux+attachData) ⇒ [<code>Redux</code>](#Redux)
     * [.interceptor(request, params, findDataIn)](#Redux+interceptor)
     * [.putInterceptor(request, bodyData, params)](#Redux+putInterceptor)
-    * [.invokeAcl(value)](#Redux+invokeAcl) ⇒ [<code>Redux</code>](#Redux)
+    * [.invokeAcl(value, debug)](#Redux+invokeAcl) ⇒ [<code>Redux</code>](#Redux)
     * [.tokenValidator(request)](#Redux+tokenValidator)
     * [.setCurrentUser(user)](#Redux+setCurrentUser)
     * [.addTag(tags)](#Redux+addTag)
@@ -397,6 +397,10 @@ Send back error to the client
 
 ### redux.auth() ⇒ <code>exports.auth</code> \| <code>\*</code>
 **Kind**: instance method of [<code>Redux</code>](#Redux)  
+<a name="Redux+attachData"></a>
+
+### redux.attachData() ⇒ [<code>Redux</code>](#Redux)
+**Kind**: instance method of [<code>Redux</code>](#Redux)  
 <a name="Redux+interceptor"></a>
 
 ### redux.interceptor(request, params, findDataIn)
@@ -421,12 +425,13 @@ Send back error to the client
 
 <a name="Redux+invokeAcl"></a>
 
-### redux.invokeAcl(value) ⇒ [<code>Redux</code>](#Redux)
+### redux.invokeAcl(value, debug) ⇒ [<code>Redux</code>](#Redux)
 **Kind**: instance method of [<code>Redux</code>](#Redux)  
 
 | Param |
 | --- |
 | value | 
+| debug | 
 
 <a name="Redux+tokenValidator"></a>
 

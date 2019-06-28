@@ -4,6 +4,7 @@ var reduxpress = require('../libs');
 var port = process.env.PORT || 8100;
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var TestModel = require('./test.model');
 
 mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
     if (err) {
@@ -16,6 +17,7 @@ mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
 
 reduxpress.setOptions({
     saveTrace: true,
+    secret: 'SECRET_WHICH_SHOULD_BE_A_SECRET',
     extendIpData: true,
     errors: {
         437: 'This error will be sent. Handle it carefully. Its hot!!'
@@ -23,13 +25,13 @@ reduxpress.setOptions({
     auth: {
         external: false
     },
-    authCallback: function (userData) {
-        return new Promise(function (resolve, reject) {
-            userData._id = 'adsad';
-            resolve(userData);
-        });
-    },
-    onError : function (error, reduxInstance) {
+    // authCallback: function (userData) {
+    //     return new Promise(function (resolve, reject) {
+    //         userData._id = 'adsad';
+    //         resolve(userData);
+    //     });
+    // },
+    onError: function (error, reduxInstance) {
         console.log('Error', error, reduxInstance);
     }
 });
@@ -49,6 +51,25 @@ app.get('/', function (req, res) {
 app.get('/raw', function (req, res) {
     var redux = req.redux;
     redux.sendJSON(res, {data: 'data'});
+});
+
+app.post('/attachData', function (req, res) {
+    var redux = req.redux;
+
+    redux
+        .attachData([
+            {path: 'ipAddress', data: '*model.ipAddress'},
+            {path: 'method', data: '*model.method'}
+        ])
+        .attachData('cachedUser', '*currentUser')
+        .attachData('version', '1.2.3')
+        .bodyValidator(req, ['ipAddress', '^method', '^cachedUser', 'version'], 'body')
+        .then(function (result) {
+            redux.sendSuccess(res, result, 'Users');
+        })
+        .catch(function (err) {
+            redux.sendError(res, err);
+        })
 });
 
 app.post('/', function (req, res) {
@@ -71,7 +92,7 @@ app.post('/', function (req, res) {
 app.get('/testAuthCallback', function (req, res) {
     var redux = req.redux;
 
-    redux.generateToken({name: 'TEST USER'}, 60, 60, 'seconds')
+    redux.generateToken({name: 'TEST USER'}, 300, 300, 'seconds')
         .then(function (token) {
             req.headers['x-access-token'] = token['x_access_token'];
             return redux.tokenValidator(req)
@@ -90,7 +111,7 @@ app.get('/getToken', function (req, res) {
     var redux = req.redux;
 
 
-    redux.generateToken({name : 'TEST USER'}, 60, 60, 'seconds')
+    redux.generateToken({name: 'TEST USER'}, 24000, 300, 'seconds')
         .then(function (value) {
             redux.sendSuccess(res, value, 'token')
         })
@@ -115,6 +136,7 @@ app.get('/verifyToken/:token', function (req, res) {
             redux.sendError(res, reason)
         })
 });
+
 
 app.listen(port, function () {
         console.log('Example app listening on port ' + port + '!')
