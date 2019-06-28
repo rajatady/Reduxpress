@@ -1,13 +1,12 @@
 /**
  * Created by kumardivyarajat on 23/09/16.
  */
-var Logger = require("../logger/index");
 var _ = require("lodash");
-var mongoose = require("mongoose");
 var utils = require("../utils/index");
 
 function Request() {
     this._suppressParams = [];
+    this._dataToAttach = [];
     this._roles = [];
 }
 
@@ -21,7 +20,24 @@ Request.prototype._suppressInputs = function () {
     _.forEach(Array.prototype.slice.call(arguments[0]), function (value) {
         that._suppressParams.push(value);
     });
-    console.log(that._suppressParams.length);
+};
+
+
+/**
+ * @method _attachData
+ * @returns {Request}
+ * @private
+ */
+Request.prototype._attachData = function () {
+    var args = Array.prototype.slice.call(arguments[0])
+    if (Array.isArray(args[0])) {
+        this._dataToAttach = this._dataToAttach.concat(args[0]);
+    } else {
+        this._dataToAttach.push({
+            path: args[0],
+            data: args[1]
+        })
+    }
 };
 
 
@@ -83,6 +99,7 @@ Request.prototype._validateQuery = function (request, params) {
 
 Request.prototype._validateBody = function (request, params) {
     var that = this;
+    request = this._resolveAttachments(request, 'body');
     if (Array.isArray(params)) {
         return that._validateSimpleModel(request, params, "body");
     } else if (utils.isObject(params)) {
@@ -187,18 +204,33 @@ Request.prototype._validateMongooseSchema = function (Schema, request, where) {
     });
 };
 
+Request.prototype._resolveAttachments = function (request, where) {
+    if (this._dataToAttach && this._dataToAttach.length) {
+        this._dataToAttach.forEach(function (datum) {
+            // Data is not internal
+            if (_.startsWith(datum.data, '*')) {
+                datum.data = datum.data.replace('*', '');
+                var matchedData = _.at(request.redux, datum.data);
+                request[where][datum.path] = matchedData ? matchedData[0] : undefined;
+            } else {
+                request[where][datum.path] = datum.data;
+            }
+        });
+    }
+    return request;
+};
+
 
 Request.prototype._validate = function (params, request, where) {
     return new Promise(function (resolve, reject) {
-
         var errMsgs = [];
         var data = {};
         var hasError = false;
         _.forEach(params, function (param) {
             if (param.indexOf("^") === -1 &&
                 (typeof request[where][param] === 'undefined' ||
-                request[where][param] === null ||
-                request[where][param] === '')) {
+                    request[where][param] === null ||
+                    request[where][param] === '')) {
                 errMsgs.push({error: "Required param " + param + " is missing."});
                 hasError = true;
             } else {
@@ -221,4 +253,4 @@ Request.prototype._validate = function (params, request, where) {
     });
 };
 
-module.exports = new Request();
+module.exports = Request;

@@ -104,7 +104,8 @@ Auth.prototype.generateToken = function (user, accessTokenTime, refreshTokenTime
         var refreshTime = refreshTokenTime + TimeUnits[unit].toUpperCase();
         tokens.x_access_token = JWT.sign(user, vm.secret, {expiresIn: accessTime});
         tokens.x_refresh_token = JWT.sign(user, vm.secret.substr(0, vm.secret.length / 2), {expiresIn: refreshTime});
-        tokens.secret = vm.secret;
+        tokens.access_token_exp = accessTime;
+        tokens.refresh_token_exp = refreshTime;
         if (vm.secret && tokens.x_access_token && tokens.x_refresh_token)
             resolve(tokens);
         else
