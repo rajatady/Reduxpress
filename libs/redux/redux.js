@@ -53,10 +53,105 @@ function Redux(model, options) {
     if (this.options.errors) {
         Err.injectError(this.options.errors);
     }
+    this.hooks = {
+        'preValidation': [],
+        'postValidation': [],
+        'preSendSuccess': [],
+        'postSendSuccess': [],
+        'preSendError': [],
+        'postSendError': [],
+        'preSave': []
+    };
+    this._parseFilters(this.options.filters || [])
 }
 
 
 /****************************** START OWN METHODS ******************************/
+
+/**
+ *
+ * @param filters
+ * @private
+ */
+Redux.prototype._parseFilters = function (filters) {
+    var vm = this
+    filters.forEach(function (filter) {
+        filter.enabled = false
+        vm.hooks[filter.hookName].push(filter)
+    })
+}
+
+
+/**
+ *
+ * @param hookName {String} The name of the hook eg postValidation, preSendSuccess
+ * @param [options]
+ * @param {function} [options.dataToFn] The data to pass to the initial filter function
+ * @param {function} [options.dataToPass] The data to resolve after the pipeline is complete
+ * @return {Promise.map}
+ * @private
+ */
+Redux.prototype._execHooks = function (hookName, options) {
+    var vm = this
+    return new Promise(function (resolve, reject) {
+        Promise.map(vm.hooks[hookName], function (filter) {
+            if (filter.enabled) {
+                return new Promise(function (resolve, reject) {
+                    if (vm.debug) {
+                        Logger.console('Started execution filter with name : ' + filter.name)
+                    }
+                    // TODO  : Add waterfall execution for true data filtering pipeline creation
+                    filter.executorFn((options && options.dataToFn) || vm, function (data) {
+                        if (vm.debug) {
+                            Logger.console('Done Executing filter with name : ' + filter.name, data)
+                        }
+                        resolve(data)
+                    })
+                })
+            } else {
+                return null;
+            }
+        })
+            .then(function (data) {
+                resolve((options && options.dataToPass) || data)
+            })
+            .catch(reject)
+    })
+};
+
+
+/**
+ * @method filter
+ * @memberOf Redux
+ * @param filterNameOrFunction
+ * @param hookName
+ * @return {Redux}
+ */
+Redux.prototype.filter = function (filterNameOrFunction, hookName) {
+    var vm = this;
+    if (!filterNameOrFunction) {
+        throw new Error('A filter name or executor function is required to register a sync hook')
+    } else if (_.isFunction(filterNameOrFunction)) {
+        if (!hookName) {
+            hookName = 'postValidation'
+        }
+        this.hooks[hookName].push({
+            name: 'SYNC_HOOK',
+            executorFn: filterNameOrFunction,
+            hookName: hookName,
+            enabled: true
+        })
+    } else {
+        _.forOwn(this.hooks, function (val, key) {
+            val.forEach(function (filter, index) {
+                if (filter.name === filterNameOrFunction) {
+                    vm.hooks[key][index].enabled = true
+                }
+            })
+        })
+    }
+    return this
+}
 
 
 /***
@@ -276,11 +371,21 @@ Redux.prototype.setExtra = function (key, value) {
  * @description Send back data to the client with the pre defined schema
  */
 Redux.prototype.sendSuccess = function (response, data, key) {
+    var vm = this;
     if (!key) {
         key = "data";
     }
-    this.response.success(response, data, key);
-    this._saveTrace(true);
+    this._execHooks('preSendSuccess', {dataToPass: data, dataToFn: data})
+        .then(function (result) {
+            vm.response.success(response, data, key);
+            return vm._execHooks('postSendSuccess', {dataToPass: data, dataToFn: data});
+        })
+        .then(function () {
+            return vm._execHooks('preSave');
+        })
+        .then(function () {
+            vm._saveTrace(true);
+        })
 };
 
 
@@ -432,7 +537,7 @@ Redux.prototype.auth = function () {
  * @memberOf Redux
  * @returns {Redux}
  */
-Redux.prototype.attachData = function() {
+Redux.prototype.attachData = function () {
     this.request._attachData(arguments);
     return this;
 }
@@ -455,8 +560,7 @@ Redux.prototype.interceptor = function (request, params, findDataIn) {
                 }
                 if (findDataIn === 'body') {
                     return self.bodyValidator(request, params);
-                }
-                else if (findDataIn === "headers") {
+                } else if (findDataIn === "headers") {
                     return self.headersValidator(request, params);
                 } else if (findDataIn === "params")
                     return self.paramsValidator(request, params);
@@ -522,7 +626,7 @@ Redux.prototype.invokeAcl = function (value, debug) {
     // });
     that.allowedRoles = value.split(" ");
     // console.log("invokeAcl", that.allowedRoles);
-    if(debug) {
+    if (debug) {
         console.log('[REDUX DEBUG] : Allowed Rules - ' + that.allowedRoles);
     }
 
@@ -533,15 +637,15 @@ Redux.prototype.invokeAcl = function (value, debug) {
 /**
  * @memberOf Redux
  * @param request
+ * @param {String} [token] The token to validate against. By default reduxpress tries to find the token in headers
+ * at x-access-token or as a query in url name access_token.
  */
-Redux.prototype.tokenValidator = function (request) {
+Redux.prototype.tokenValidator = function (request, token) {
     var self = this;
     return new Promise(function (resolve, reject) {
-        if (request.headers["x-access-token"]) {
-            self.headersValidator(request, ["x-access-token"])
-                .then(function (data) {
-                    return self.verifyToken(data['x-access-token']);
-                })
+        var accessToken = token || request.headers["x-access-token"] || request.query['access_token'];
+        if (accessToken) {
+            self.verifyToken(accessToken)
                 .then(function (result) {
                     self.setCurrentUser(result);
                     if (self.allowedRoles.length > 0) {
@@ -550,29 +654,10 @@ Redux.prototype.tokenValidator = function (request) {
                             throw self.generateError(403, "Unauthorized");
                         }
                     }
-                    resolve(result);
+                    return self._execHooks('postValidation', {dataToPass: result})
                 })
-                .catch(function (error) {
-                    reject(error);
-                })
-        } else if (request.query['access_token']) {
-            self.queryValidator(request, ['access_token'])
-                .then(function (data) {
-                    return self.verifyToken(data['access_token']);
-                })
-                .then(function (result) {
-                    self.setCurrentUser(result);
-                    if (self.allowedRoles.length > 0) {
-                        var valid = self._checkRolesValidity();
-                        if (!valid) {
-                            throw self.generateError(403, "Unauthorized");
-                        }
-                    }
-                    resolve(result);
-                })
-                .catch(function (error) {
-                    reject(error);
-                })
+                .then(resolve)
+                .catch(reject)
         } else {
             throw self.generateError(403, "Unauthorized");
         }
