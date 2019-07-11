@@ -5,6 +5,7 @@ var Cron = require("./libs/auth/cron");
 var Routes = require("./routes");
 var ReduxCrud = require("./libs/crud-router/index");
 var reduxOptions = {};
+var  filters = [];
 var _ = require('lodash');
 
 /**
@@ -53,6 +54,29 @@ module.exports.setOptions = function (options) {
 
 /**
  *
+ * @param name
+ * @param executorFn
+ * @param hookName
+ */
+module.exports.registerFilter = function(name, executorFn, hookName) {
+    if(!filters) {
+        filters = [];
+    }
+    if(!name) {
+        throw new Error('A filter must have a name to be registered in redux')
+    }
+    if(!executorFn) {
+        throw new Error('A filter in redux requires an executor function to be passed as the second parameter')
+    }
+    filters.push({
+        name : name,
+        executorFn : executorFn,
+        hookName : hookName ? hookName : 'postValidation'
+    })
+};
+
+/**
+ *
  * @param request
  * @param response
  * @param next
@@ -76,7 +100,7 @@ module.exports.mount = function (request, response, next) {
         version: request.headers.version,
         originalUrl: request.originalUrl
     });
-
+    reduxOptions.filters = filters;
     var redux = new Redux(model, reduxOptions);
     request.redux = redux;
     if (!reduxOptions.supressInitMessage) {

@@ -15,8 +15,23 @@ mongoose.connect('mongodb://localhost/myapp', {}, function (err) {
 });
 
 
+reduxpress.registerFilter('testFilter', function (redux, next) {
+    redux.currentUser.name = 'TEST_USER_1';
+    console.log('From Filter');
+    next();
+}, 'postValidation');
+
+
+reduxpress.registerFilter('successFilter', function (data, next) {
+    console.log('Data FROM FILTER', data);
+    delete data.name;
+    next();
+}, 'preSendSuccess');
+
+
 reduxpress.setOptions({
     saveTrace: true,
+    debug: true,
     secret: 'SECRET_WHICH_SHOULD_BE_A_SECRET',
     extendIpData: true,
     errors: {
@@ -124,9 +139,11 @@ app.get('/verifyToken/:token', function (req, res) {
     var redux = req.redux;
 
     redux
+        .filter('testFilter')
+        .filter('successFilter')
         .paramsValidator(req, ['token'])
         .then(function (result) {
-            return redux.verifyToken(result.token);
+            return redux.tokenValidator(req, result.token);
         })
         .then(function (value) {
             console.log(value)

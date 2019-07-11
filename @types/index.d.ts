@@ -2,14 +2,13 @@
 /// <reference types="express" />
 
 import {Request, Response} from "express";
-import {Mongoose} from "mongoose";
-import {Document, Model} from "mongoose";
+import {Document, Model, Mongoose} from "mongoose";
 import {ReduxPress} from "./index";
 
 declare module 'express' {
 
     export interface Request {
-        redux? : ReduxPress
+        redux?: ReduxPress
     }
 }
 
@@ -20,6 +19,8 @@ declare namespace r {
     export function mount(request?: Request, response?: Response): void;
 
     export function setOptions(options: IReduxOptions): void;
+
+    export function registerFilter(name: string, executorFn: (data, next) => any, hookName?: string);
 
     export interface ReduxPress {
         invokeAcl(aclString: string): ReduxPress
@@ -56,7 +57,7 @@ declare namespace r {
 
         requestValidator(request: Request, params: string[] | Model<any>, inBody: boolean): Promise<any[]>;
 
-        tokenValidator(request: Request): Promise<CurrentUser>;
+        tokenValidator(request: Request, token?: string): Promise<CurrentUser>;
 
         putInterceptor(request: Request, bodyParams: string[] | Model<any>, params: string[]): Promise<Document[] | any[]>;
 
@@ -64,7 +65,7 @@ declare namespace r {
 
         generateToken(user: CurrentUser, accessTokenTime?: number, refreshTokenTime?: number, unit?: string): Promise<TokenData>;
 
-        verifyToken(request : string | Request) : Promise<CurrentUser>;
+        verifyToken(request: string | Request): Promise<CurrentUser>;
 
         generateOTP(secret: string, options?: OTPOptions): Promise<string>;
 
@@ -87,6 +88,8 @@ declare namespace r {
         sendError(response: Response, error: Error | string, statusCode?: number): Response
 
         generateError(code: number, message?: string): ReduxError;
+
+        filter(filterNameOrFunction: (data, next) => any | string, hookName?: string)
 
     }
 
