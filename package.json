@@ -1,18 +1,14 @@
 {
-    "name": "reduxpress",
-    "version": "1.2.3",
-    "description": "",
-    "main": "libs",
+    "private": true,
     "workspaces" : [
-        "*"
+        "packages/@reduxpress"
     ],
     "scripts": {
-        "start": "node libs",
         "lint": "eslint .",
         "prepublish": "npm run docs",
         "release": "node scripts/release.js",
-        "docs": "jsdoc2md --template docs/README.hbs libs/**/*.js > docs/README.md",
-        "docs:dev": "npm run docs && vuepress dev docs",
+        "docs": "jsdoc2md --template docs/README.hbs packages/@reduxpress/**/*.js > docs/api/README.md",
+        "docs:dev": "npm run docs && vuepress dev docs .temp",
         "docs:build": "npm run docs && vuepress build docs",
         "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 2",
         "test": "mocha --require test/support/env --reporter spec --bail --check-leaks --no-exit test/**/**.spec.js test/acceptance/",
@@ -20,38 +16,14 @@
         "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env --reporter dot --check-leaks --no-exit test/**/**.spec.js test/acceptance/",
         "test-tap": "mocha --require test/support/env --reporter tap --check-leaks --no-exit test/**/**.spec.js test/acceptance/"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/rajatady/Redux press.git"
-    },
-    "author": "Kumar Divya Rajat <rajat.ady@gmail.com>",
-    "license": "MIT",
-    "homepage": "https://github.com/rajatady/Reduxpress",
     "dependencies": {
-        "async": "^2.5.0",
-        "bluebird": "^3.5.0",
-        "chalk": "^2.1.0",
-        "console.table": "^0.9.1",
-        "iplocation": "^6.0.4",
-        "jsonwebtoken": "^8.4.0",
-        "lodash": "^4.17.10",
-        "mongoose": "^5.2.6",
-        "querymen": "^2.1.3",
-        "request": "^2.87.0",
-        "speakeasy": "^2.0.0"
+
     },
     "devDependencies": {
         "conventional-changelog-cli": "^1.3.22",
-        "body-parser": "^1.18.3",
-        "chai": "^4.1.2",
         "eslint": "2.13.1",
-        "express": "^4.16.3",
         "istanbul": "0.4.5",
         "jsdoc-to-markdown": "^4.0.1",
-        "mocha": "^5.2.0",
-        "should": "13.1.0",
-        "sinon": "^5.0.10",
-        "supertest": "^3.3.0",
         "vuepress": "^0.14.8",
         "execa": "latest",
         "semver": "latest",

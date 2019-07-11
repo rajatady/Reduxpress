@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var reduxpress = require('../libs');
+var reduxpress = require('../packages/@reduxpress');
 var port = process.env.PORT || 8100;
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
