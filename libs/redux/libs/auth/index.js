@@ -17,15 +17,19 @@ function Auth(appSecret) {
 /**
  * @memberOf Auth#
  * @param token
+ * @param suppressError
  * @returns {Promise}
  */
-
-Auth.prototype.validateToken = function (token) {
+Auth.prototype.validateToken = function (token, suppressError) {
     var vm = this;
     return new Promise(function (resolve, reject) {
         JWT.verify(token, vm.secret, function (error, decoded) {
             if (error) {
-                reject(ErrorUtils.generateNewError(413));
+                if(!suppressError) {
+                    reject(ErrorUtils.generateNewError(413));
+                } else {
+                    resolve();
+                }
             }
             else {
                 var dataToReturn;
