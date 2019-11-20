@@ -50,6 +50,7 @@ function Redux(model, options) {
     this.startTime = new Date().getTime();
     this.endTime = "";
     this.allowedRoles = [];
+    this._suppressAuthError = false;
     if (this.options.errors) {
         Err.injectError(this.options.errors);
     }
@@ -633,6 +634,14 @@ Redux.prototype.invokeAcl = function (value, debug) {
     return that;
 };
 
+/**
+ * @memberOf Redux
+ * @returns {Redux}
+ */
+Redux.prototype.suppressAuthError = function() {
+    this._suppressAuthError = true;
+    return this;
+};
 
 /**
  * @memberOf Redux
@@ -659,7 +668,11 @@ Redux.prototype.tokenValidator = function (request, token) {
                 .then(resolve)
                 .catch(reject)
         } else {
-            throw self.generateError(403, "Unauthorized");
+            if(self._suppressAuthError) {
+                resolve();
+            } else {
+                throw self.generateError(403, "Unauthorized");
+            }
         }
     });
 };
@@ -708,7 +721,7 @@ Redux.prototype.verifyToken = function (token) {
             if (that.options.auth.external) {
                 promise = that.auth.validateExternalToken(token, that.options.auth);
             } else {
-                promise = that.auth.validateToken(token);
+                promise = that.auth.validateToken(token, that._suppressAuthError);
             }
             promise
                 .then(function (data) {
@@ -728,7 +741,7 @@ Redux.prototype.verifyToken = function (token) {
                     if (that.options.auth.external) {
                         return that.auth.validateExternalToken(token, that.options.auth);
                     } else {
-                        return that.auth.validateToken(data["x-access-token"]);
+                        return that.auth.validateToken(data["x-access-token"], that._suppressAuthError);
                     }
                 })
                 .then(function (data) {

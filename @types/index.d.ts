@@ -45,6 +45,8 @@ declare namespace r {
 
         attachData(options: AttachmentOptions[]): this;
 
+        suppressAuthError() : this;
+
         invokeAcl(value: string, debug?: boolean): this;
 
         queryValidator(request: Request, params: string[]): Promise<any>;
