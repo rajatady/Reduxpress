@@ -117,6 +117,7 @@ module.exports = function(request, response) {
         * [.schema](#module_reduxpress.schema)
         * [.logger](#module_reduxpress.logger)
         * [.setOptions(options)](#module_reduxpress.setOptions)
+        * [.registerFilter(name, executorFn, hookName)](#module_reduxpress.registerFilter)
         * [.mount(request, response, next)](#module_reduxpress.mount)
         * [.startCronJobs()](#module_reduxpress.startCronJobs)
         * [.router()](#module_reduxpress.router) ⇒ <code>Routes</code>
@@ -171,6 +172,17 @@ Set options for the redux framework
      });
 }
 ```
+<a name="module_reduxpress.registerFilter"></a>
+
+### reduxpress.registerFilter(name, executorFn, hookName)
+**Kind**: static method of [<code>reduxpress</code>](#module_reduxpress)  
+
+| Param |
+| --- |
+| name | 
+| executorFn | 
+| hookName | 
+
 <a name="module_reduxpress.mount"></a>
 
 ### reduxpress.mount(request, response, next)
@@ -223,37 +235,41 @@ Redux
 
 * [Redux](#Redux)
     * [new Redux(model, options)](#new_Redux_new)
-    * [.logger()](#Redux+logger) ⇒ <code>Redux.logger</code> \| <code>\*</code>
-    * [.printTrace()](#Redux+printTrace)
-    * [.log(data, title)](#Redux+log)
-    * [.err(data)](#Redux+err)
-    * [.suppressInput()](#Redux+suppressInput) ⇒ [<code>Redux</code>](#Redux)
-    * [.paramsValidator(request, params)](#Redux+paramsValidator)
-    * [.bodyValidator(request, params)](#Redux+bodyValidator)
-    * [.queryValidator(request, params)](#Redux+queryValidator)
-    * [.utils()](#Redux+utils) ⇒
-    * [.idValidator(data)](#Redux+idValidator)
-    * [.response()](#Redux+response) ⇒
-    * [.setExtra(key, value)](#Redux+setExtra) ⇒ [<code>Redux</code>](#Redux)
-    * [.sendSuccess(response, data, key)](#Redux+sendSuccess)
-    * [.sendJSON(response, data, status)](#Redux+sendJSON)
-    * [.sendError(response, data, message)](#Redux+sendError)
-    * [.auth()](#Redux+auth) ⇒ <code>exports.auth</code> \| <code>\*</code>
-    * [.attachData()](#Redux+attachData) ⇒ [<code>Redux</code>](#Redux)
-    * [.interceptor(request, params, findDataIn)](#Redux+interceptor)
-    * [.putInterceptor(request, bodyData, params)](#Redux+putInterceptor)
-    * [.invokeAcl(value, debug)](#Redux+invokeAcl) ⇒ [<code>Redux</code>](#Redux)
-    * [.tokenValidator(request)](#Redux+tokenValidator)
-    * [.setCurrentUser(user)](#Redux+setCurrentUser)
-    * [.addTag(tags)](#Redux+addTag)
-    * [.saveAuthDetails(data)](#Redux+saveAuthDetails)
-    * [.verifyToken(token)](#Redux+verifyToken) ⇒ <code>Promise</code>
-    * [.generateToken(user, accessTokenTime, refreshTokenTime, unit)](#Redux+generateToken) ⇒ <code>Promise</code>
-    * [.generateOTP(secret, options)](#Redux+generateOTP) ⇒ <code>Promise</code>
-    * [.verifyOTP(secret, OTP, options)](#Redux+verifyOTP) ⇒ <code>Promise</code>
-    * [.generateError(code, message)](#Redux+generateError) ⇒ <code>\*</code>
-    * [.sendSingleSMS(mobile, message)](#Redux+sendSingleSMS) ⇒ <code>bluebird</code>
-    * [.setMetaData(data)](#Redux+setMetaData) ⇒ [<code>Redux</code>](#Redux)
+    * _instance_
+        * [.logger()](#Redux+logger) ⇒ <code>Redux.logger</code> \| <code>\*</code>
+        * [.printTrace()](#Redux+printTrace)
+        * [.log(data, title)](#Redux+log)
+        * [.err(data)](#Redux+err)
+        * [.suppressInput()](#Redux+suppressInput) ⇒ [<code>Redux</code>](#Redux)
+        * [.paramsValidator(request, params)](#Redux+paramsValidator)
+        * [.bodyValidator(request, params)](#Redux+bodyValidator)
+        * [.queryValidator(request, params)](#Redux+queryValidator)
+        * [.utils()](#Redux+utils) ⇒
+        * [.idValidator(data)](#Redux+idValidator)
+        * [.response()](#Redux+response) ⇒
+        * [.setExtra(key, value)](#Redux+setExtra) ⇒ [<code>Redux</code>](#Redux)
+        * [.sendSuccess(response, data, key)](#Redux+sendSuccess)
+        * [.sendJSON(response, data, status)](#Redux+sendJSON)
+        * [.sendError(response, data, message)](#Redux+sendError)
+        * [.auth()](#Redux+auth) ⇒ <code>exports.auth</code> \| <code>\*</code>
+        * [.attachData()](#Redux+attachData) ⇒ [<code>Redux</code>](#Redux)
+        * [.interceptor(request, params, findDataIn)](#Redux+interceptor)
+        * [.putInterceptor(request, bodyData, params)](#Redux+putInterceptor)
+        * [.invokeAcl(value, debug)](#Redux+invokeAcl) ⇒ [<code>Redux</code>](#Redux)
+        * [.suppressAuthError()](#Redux+suppressAuthError) ⇒ [<code>Redux</code>](#Redux)
+        * [.tokenValidator(request, [token])](#Redux+tokenValidator)
+        * [.setCurrentUser(user)](#Redux+setCurrentUser)
+        * [.addTag(tags)](#Redux+addTag)
+        * [.saveAuthDetails(data)](#Redux+saveAuthDetails)
+        * [.verifyToken(token)](#Redux+verifyToken) ⇒ <code>Promise</code>
+        * [.generateToken(user, accessTokenTime, refreshTokenTime, unit)](#Redux+generateToken) ⇒ <code>Promise</code>
+        * [.generateOTP(secret, options)](#Redux+generateOTP) ⇒ <code>Promise</code>
+        * [.verifyOTP(secret, OTP, options)](#Redux+verifyOTP) ⇒ <code>Promise</code>
+        * [.generateError(code, message)](#Redux+generateError) ⇒ <code>\*</code>
+        * [.sendSingleSMS(mobile, message)](#Redux+sendSingleSMS) ⇒ <code>bluebird</code>
+        * [.setMetaData(data)](#Redux+setMetaData) ⇒ [<code>Redux</code>](#Redux)
+    * _static_
+        * [.filter(filterNameOrFunction, hookName)](#Redux.filter) ⇒ [<code>Redux</code>](#Redux)
 
 <a name="new_Redux_new"></a>
 
@@ -433,14 +449,19 @@ Send back error to the client
 | value | 
 | debug | 
 
+<a name="Redux+suppressAuthError"></a>
+
+### redux.suppressAuthError() ⇒ [<code>Redux</code>](#Redux)
+**Kind**: instance method of [<code>Redux</code>](#Redux)  
 <a name="Redux+tokenValidator"></a>
 
-### redux.tokenValidator(request)
+### redux.tokenValidator(request, [token])
 **Kind**: instance method of [<code>Redux</code>](#Redux)  
 
-| Param |
-| --- |
-| request | 
+| Param | Type | Description |
+| --- | --- | --- |
+| request |  |  |
+| [token] | <code>String</code> | The token to validate against. By default reduxpress tries to find the token in headers at x-access-token or as a query in url name access_token. |
 
 <a name="Redux+setCurrentUser"></a>
 
@@ -539,6 +560,16 @@ Send back error to the client
 | Param |
 | --- |
 | data | 
+
+<a name="Redux.filter"></a>
+
+### Redux.filter(filterNameOrFunction, hookName) ⇒ [<code>Redux</code>](#Redux)
+**Kind**: static method of [<code>Redux</code>](#Redux)  
+
+| Param |
+| --- |
+| filterNameOrFunction | 
+| hookName | 
 
 <a name="defaultOptions"></a>
 

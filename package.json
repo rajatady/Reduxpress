@@ -1,6 +1,6 @@
 {
     "name": "reduxpress",
-    "version": "1.4.3",
+    "version": "1.4.4",
     "description": "",
     "main": "libs",
     "types": "./@types/index.d.ts",
