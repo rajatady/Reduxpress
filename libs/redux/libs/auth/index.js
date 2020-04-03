@@ -28,7 +28,9 @@ Auth.prototype.validateToken = function (token, suppressError) {
                 if(!suppressError) {
                     reject(ErrorUtils.generateNewError(413));
                 } else {
-                    resolve();
+                    var customError = ErrorUtils.generateNewError(413);
+                    customError.suppress = true;
+                    reject(customError);
                 }
             }
             else {

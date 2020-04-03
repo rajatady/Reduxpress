@@ -666,7 +666,10 @@ Redux.prototype.tokenValidator = function (request, token) {
                     return self._execHooks('postValidation', {dataToPass: result})
                 })
                 .then(resolve)
-                .catch(reject)
+                .catch(err => {
+                    if(err && err.suppress) resolve();
+                    else reject(err);
+                })
         } else {
             if(self._suppressAuthError) {
                 resolve();
