@@ -55,19 +55,21 @@ declare namespace r {
 
         headersValidator(request: Request, params: string[]): Promise<any[]>;
 
-        bodyValidator(request: Request, params: string[] | Model<any>): Promise<Document[] | any[]>;
+        bodyValidator(request: Request, params: string[] | Model<any>): Promise<Document[] | any>;
 
         requestValidator(request: Request, params: string[] | Model<any>, inBody: boolean): Promise<any[]>;
 
         tokenValidator(request: Request, token?: string): Promise<CurrentUser>;
 
-        putInterceptor(request: Request, bodyParams: string[] | Model<any>, params: string[]): Promise<Document[] | any[]>;
+        putInterceptor(request: Request, bodyParams: string[] | Model<any>, params: string[]): Promise<Document[] | any>;
 
         interceptor(request: Request, params: string[] | Model<any>, findWhere: string): Promise<Document | any>;
 
         generateToken(user: CurrentUser, accessTokenTime?: number, refreshTokenTime?: number, unit?: string): Promise<TokenData>;
 
         verifyToken(request: string | Request): Promise<CurrentUser>;
+
+        issueNewToken(refreshToken : string, user: CurrentUser,  accessTokenTime?: number, refreshTokenTime?: number, unit?: string): Promise<TokenData>;
 
         generateOTP(secret: string, options?: OTPOptions): Promise<string>;
 

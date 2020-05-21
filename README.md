@@ -263,6 +263,7 @@ Redux
         * [.saveAuthDetails(data)](#Redux+saveAuthDetails)
         * [.verifyToken(token)](#Redux+verifyToken) ⇒ <code>Promise</code>
         * [.generateToken(user, accessTokenTime, refreshTokenTime, unit)](#Redux+generateToken) ⇒ <code>Promise</code>
+        * [.issueNewToken(refreshToken, user, accessTokenTime, refreshTokenTime, unit)](#Redux+issueNewToken) ⇒ <code>Promise</code>
         * [.generateOTP(secret, options)](#Redux+generateOTP) ⇒ <code>Promise</code>
         * [.verifyOTP(secret, OTP, options)](#Redux+verifyOTP) ⇒ <code>Promise</code>
         * [.generateError(code, message)](#Redux+generateError) ⇒ <code>\*</code>
@@ -506,6 +507,19 @@ Send back error to the client
 
 | Param |
 | --- |
+| user | 
+| accessTokenTime | 
+| refreshTokenTime | 
+| unit | 
+
+<a name="Redux+issueNewToken"></a>
+
+### redux.issueNewToken(refreshToken, user, accessTokenTime, refreshTokenTime, unit) ⇒ <code>Promise</code>
+**Kind**: instance method of [<code>Redux</code>](#Redux)  
+
+| Param |
+| --- |
+| refreshToken | 
 | user | 
 | accessTokenTime | 
 | refreshTokenTime | 

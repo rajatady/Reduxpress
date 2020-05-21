@@ -50,6 +50,21 @@ Auth.prototype.validateToken = function (token, suppressError) {
     })
 };
 
+Auth.prototype.issueNewToken = function(refreshToken,user, accessTokenTime,refreshTokenTime, unit) {
+    var vm = this;
+    return new Promise(function(resolve, reject) {
+        JWT.verify(refreshToken, vm.secret.substr(0, vm.secret.length / 2), function (error, decoded) {
+            if (error) {
+                return reject(ErrorUtils.generateNewError(403));
+            } else {
+                vm.generateToken(user, accessTokenTime, refreshTokenTime, unit)
+                    .then(resolve)
+                    .catch(reject)
+            }
+        })
+    })
+}
+
 /**
  * @memberOf Auth#
  * @param token

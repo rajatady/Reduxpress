@@ -788,6 +788,18 @@ Redux.prototype.generateToken = function (user, accessTokenTime, refreshTokenTim
     return this.auth.generateToken(user, accessTokenTime, refreshTokenTime, unit);
 };
 
+/**
+ * @memberOf Redux
+ * @param refreshToken
+ * @param user
+ * @param accessTokenTime
+ * @param refreshTokenTime
+ * @param unit
+ * @returns {Promise}
+ */
+Redux.prototype.issueNewToken = function(refreshToken, user, accessTokenTime,refreshTokenTime, unit) {
+    return this.auth.issueNewToken(refreshToken,user, accessTokenTime,refreshTokenTime, unit);
+}
 
 /**
  * @memberOf Redux
