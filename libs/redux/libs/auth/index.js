@@ -50,6 +50,46 @@ Auth.prototype.validateToken = function (token, suppressError) {
     })
 };
 
+Auth.prototype.validateRefreshToken = function(refreshToken, suppressError) {
+    var vm = this;
+    return new Promise(function(resolve, reject) {
+        JWT.verify(refreshToken, vm.secret.substr(0, vm.secret.length / 2), function (error, decoded) {
+            if (error) {
+                if(!suppressError) {
+                    reject(ErrorUtils.generateNewError(413));
+                } else {
+                    var customError = ErrorUtils.generateNewError(413);
+                    customError.suppress = true;
+                    reject(customError);
+                }
+            }
+            else {
+                var dataToReturn;
+                if (!dataToReturn) {
+                    dataToReturn = decoded.user;
+                }
+                if (!dataToReturn) {
+                    dataToReturn = decoded._doc;
+                }
+                if(!dataToReturn) {
+                    dataToReturn = decoded;
+                }
+                resolve(dataToReturn);
+            }
+        })
+    })
+}
+
+
+/**
+ * @deprecated
+ * @param refreshToken
+ * @param user
+ * @param accessTokenTime
+ * @param refreshTokenTime
+ * @param unit
+ * @return {Promise<unknown>}
+ */
 Auth.prototype.issueNewToken = function(refreshToken,user, accessTokenTime,refreshTokenTime, unit) {
     var vm = this;
     return new Promise(function(resolve, reject) {

@@ -69,6 +69,8 @@ declare namespace r {
 
         verifyToken(request: string | Request): Promise<CurrentUser>;
 
+        verifyRefreshToken(request: string | Request, suppressError? : boolean): Promise<CurrentUser>;
+
         issueNewToken(refreshToken : string, user: CurrentUser,  accessTokenTime?: number, refreshTokenTime?: number, unit?: string): Promise<TokenData>;
 
         generateOTP(secret: string, options?: OTPOptions): Promise<string>;

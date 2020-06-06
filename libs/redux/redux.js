@@ -778,6 +778,17 @@ Redux.prototype._executeOnErrorCallback = function (error) {
 
 /**
  * @memberOf Redux
+ * @param token
+ * @param suppressError
+ * @since 1.4.6
+ * @return {Promise}
+ */
+Redux.prototype.verifyRefreshToken = function(token, suppressError) {
+    return this.auth.validateRefreshToken(token, suppressError);
+}
+
+/**
+ * @memberOf Redux
  * @param user
  * @param accessTokenTime
  * @param refreshTokenTime
@@ -789,6 +800,8 @@ Redux.prototype.generateToken = function (user, accessTokenTime, refreshTokenTim
 };
 
 /**
+ * @deprecated
+ * @since 1.4.5
  * @memberOf Redux
  * @param refreshToken
  * @param user
