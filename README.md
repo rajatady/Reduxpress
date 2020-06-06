@@ -262,7 +262,9 @@ Redux
         * [.addTag(tags)](#Redux+addTag)
         * [.saveAuthDetails(data)](#Redux+saveAuthDetails)
         * [.verifyToken(token)](#Redux+verifyToken) ⇒ <code>Promise</code>
+        * [.verifyRefreshToken(token, suppressError)](#Redux+verifyRefreshToken) ⇒ <code>Promise</code>
         * [.generateToken(user, accessTokenTime, refreshTokenTime, unit)](#Redux+generateToken) ⇒ <code>Promise</code>
+        * ~~[.issueNewToken(refreshToken, user, accessTokenTime, refreshTokenTime, unit)](#Redux+issueNewToken) ⇒ <code>Promise</code>~~
         * [.generateOTP(secret, options)](#Redux+generateOTP) ⇒ <code>Promise</code>
         * [.verifyOTP(secret, OTP, options)](#Redux+verifyOTP) ⇒ <code>Promise</code>
         * [.generateError(code, message)](#Redux+generateError) ⇒ <code>\*</code>
@@ -499,6 +501,17 @@ Send back error to the client
 | --- |
 | token | 
 
+<a name="Redux+verifyRefreshToken"></a>
+
+### redux.verifyRefreshToken(token, suppressError) ⇒ <code>Promise</code>
+**Kind**: instance method of [<code>Redux</code>](#Redux)  
+**Since**: 1.4.6  
+
+| Param |
+| --- |
+| token | 
+| suppressError | 
+
 <a name="Redux+generateToken"></a>
 
 ### redux.generateToken(user, accessTokenTime, refreshTokenTime, unit) ⇒ <code>Promise</code>
@@ -506,6 +519,22 @@ Send back error to the client
 
 | Param |
 | --- |
+| user | 
+| accessTokenTime | 
+| refreshTokenTime | 
+| unit | 
+
+<a name="Redux+issueNewToken"></a>
+
+### ~~redux.issueNewToken(refreshToken, user, accessTokenTime, refreshTokenTime, unit) ⇒ <code>Promise</code>~~
+***Deprecated***
+
+**Kind**: instance method of [<code>Redux</code>](#Redux)  
+**Since**: 1.4.5  
+
+| Param |
+| --- |
+| refreshToken | 
 | user | 
 | accessTokenTime | 
 | refreshTokenTime | 
