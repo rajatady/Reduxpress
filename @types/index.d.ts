@@ -22,6 +22,8 @@ declare namespace r {
 
     export function registerFilter(name: string, executorFn: (data, next) => any, hookName?: string);
 
+    export function getTestDouble(options?: IReduxOptions) : ReduxPress;
+
     export interface ReduxPress {
         invokeAcl(aclString: string): ReduxPress
 
