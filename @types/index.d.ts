@@ -110,7 +110,7 @@ declare namespace r {
         engine?: string;
         auth?: IReduxAuthOptions;
         authCallback?: (n: number) => any;
-        onError?: (error: Error) => any;
+        onError?: (error: Error, model : ReduxModel) => any;
         secret?: string;
     }
 
@@ -140,6 +140,7 @@ declare namespace r {
     }
 
     export interface ReduxModel {
+        _id : string;
         route: string;
         ipAddress: string;
         ipDetails?: any;

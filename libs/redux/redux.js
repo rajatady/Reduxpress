@@ -411,9 +411,9 @@ Redux.prototype.sendJSON = function (response, data, status) {
  */
 Redux.prototype.sendError = function (response, data, message) {
     this.err(data);
-    this.response.error(response, data, message);
+    var thrownError = this.response.error(response, data, message);
     this._saveTrace(false);
-    this._executeOnErrorCallback(data);
+    this._executeOnErrorCallback(thrownError);
 };
 
 var _save = function (that, resolved, ttr) {
