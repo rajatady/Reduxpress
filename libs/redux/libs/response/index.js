@@ -95,7 +95,7 @@ Response.prototype.error = function (response, error, message) {
             err.code = 500;
         }
     } else {
-        err = ReduxError.generateNewError(error.code, message);
+        err = ReduxError.generateNewError(error.code, error.message || message);
     }
     var builderData = {
         status: "failure",
@@ -103,6 +103,7 @@ Response.prototype.error = function (response, error, message) {
         message: {error: err.message}
     };
     response.json(builderData);
+    return err;
 };
 
 /**
