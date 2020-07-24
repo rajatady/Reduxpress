@@ -140,6 +140,7 @@ declare namespace r {
     }
 
     export interface ReduxModel {
+        _id : string;
         route: string;
         ipAddress: string;
         ipDetails?: any;
