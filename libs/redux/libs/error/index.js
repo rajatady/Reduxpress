@@ -1,6 +1,7 @@
 /**
  * Created by kumardivyarajat on 24/08/16.
  */
+var _ = require('lodash');
 
 var errors = {
     //General Errors
@@ -79,7 +80,7 @@ var error = {
         return err;
     },
     injectError: function (errObject) {
-        errors = errObject;
+        errors = _.mergeWith(errors, errObject);
     }
 };
 

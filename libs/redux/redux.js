@@ -51,9 +51,6 @@ function Redux(model, options) {
     this.endTime = "";
     this.allowedRoles = [];
     this._suppressAuthError = false;
-    if (this.options.errors) {
-        Err.injectError(this.options.errors);
-    }
     this.hooks = {
         'preValidation': [],
         'postValidation': [],
