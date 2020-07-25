@@ -7,6 +7,7 @@ var ReduxCrud = require("./libs/crud-router/index");
 var reduxOptions = {};
 var  filters = [];
 var _ = require('lodash');
+var ErrorModule = require("./libs/error/index");
 
 /**
  * @module reduxpress
@@ -27,6 +28,7 @@ var _ = require('lodash');
  * @param {String} options.mongooseInstance The mongoose instance for saving the data when the storage engine is db
  * @param {Boolean} options.extendIpData Whether or not to extend the IP address data
  * @param {String} options.engine The storage engine to use. Either file or db. Defaults to db.
+ * @param {String} options.errors The error object to extend the internal stored errors. Overwrites the internal errors if the same error is code is passed.
  * @param {Boolean} options.auth.external Is the authentication logic local or external
  * @param {String} options.auth.apiUrl API Url of the external authentication node
  * @param {String} options.auth.method The HTTP method to use {defaults to GET}
@@ -36,6 +38,9 @@ var _ = require('lodash');
  * @param {String} options.onError Callback function to be executed when an error is encountered
  */
 module.exports.setOptions = function (options) {
+    if(!options) {
+        options = {};
+    }
     reduxOptions = options;
     if (options.mongooseInstance) {
         Model = require('./model')(options.mongooseInstance)
@@ -49,6 +54,9 @@ module.exports.setOptions = function (options) {
 
     if (options.onError && !_.isFunction(options.onError)) {
         throw new Error('Reduxpress - The onError Callback param should be function')
+    }
+    if(options.errors) {
+        ErrorModule.injectError(options.errors)
     }
 };
 

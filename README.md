@@ -156,6 +156,7 @@ Set options for the redux framework
 | options.mongooseInstance | <code>String</code> | The mongoose instance for saving the data when the storage engine is db |
 | options.extendIpData | <code>Boolean</code> | Whether or not to extend the IP address data |
 | options.engine | <code>String</code> | The storage engine to use. Either file or db. Defaults to db. |
+| options.errors | <code>String</code> | The error object to extend the internal stored errors. Overwrites the internal errors if the same error is code is passed. |
 | options.auth.external | <code>Boolean</code> | Is the authentication logic local or external |
 | options.auth.apiUrl | <code>String</code> | API Url of the external authentication node |
 | options.auth.method | <code>String</code> | The HTTP method to use {defaults to GET} |

@@ -101,6 +101,10 @@ declare namespace r {
 
     }
 
+    interface ReduxErrorLikeObject {
+        [key: number]: string
+    }
+
     export interface IReduxOptions {
         saveTrace?: boolean;
         supressInitMessage?: boolean;
@@ -112,6 +116,7 @@ declare namespace r {
         authCallback?: (n: number) => any;
         onError?: (error: Error, model : ReduxModel) => any;
         secret?: string;
+        errors? : ReduxErrorLikeObject;
     }
 
     export interface IReduxAuthOptions {
