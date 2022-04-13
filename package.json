@@ -31,7 +31,7 @@
     "license": "MIT",
     "homepage": "https://github.com/rajatady/Reduxpress",
     "dependencies": {
-        "async": "^2.5.0",
+        "async": "^3.2.2",
         "bluebird": "^3.5.3",
         "chalk": "^2.1.0",
         "console.table": "^0.9.1",
