@@ -36,7 +36,7 @@
         "chalk": "^2.1.0",
         "console.table": "^0.9.1",
         "iplocation": "^6.0.4",
-        "jsonwebtoken": "^8.4.0",
+        "jsonwebtoken": "^9.0.0",
         "lodash": "^4.17.10",
         "mongoose": "^5.2.6",
         "querymen": "^2.1.3",
